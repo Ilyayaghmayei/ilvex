@@ -1,7 +1,7 @@
 /* =====================================================
    ilvex 2.0
    Main JavaScript
-   Tools + Market Prices + Persian/English + Security
+   Tools + Market Prices + Security
 ===================================================== */
 
 "use strict";
@@ -55,7 +55,6 @@ function showResult(id, message) {
     const element = document.getElementById(id);
 
     if (element) {
-        // نمایش نتیجه با textContent به‌جای innerHTML
         element.textContent = String(message);
     }
 }
@@ -74,7 +73,6 @@ function gcd(a, b) {
 
 /* =====================================================
    2. ماشین‌حساب امن
-   بدون eval و بدون Function
 ===================================================== */
 
 function safeCalculateExpression(source) {
@@ -88,16 +86,13 @@ function safeCalculateExpression(source) {
         throw new Error("empty");
     }
 
-    // فقط اعداد، نقطه اعشار، عملگرها و پرانتزها
     if (!/^[0-9+\-*/().\s]+$/.test(expression)) {
         throw new Error("invalid-characters");
     }
 
-    // ساخت توکن‌های ریاضی
     const tokenPattern = /\d+(?:\.\d*)?|\.\d+|[()+*/-]/g;
     const tokens = expression.match(tokenPattern) || [];
 
-    // بررسی می‌کنیم هیچ ورودی ناشناخته‌ای نادیده گرفته نشود.
     if (tokens.join("") !== expression.replace(/\s/g, "")) {
         throw new Error("invalid-expression");
     }
@@ -426,74 +421,55 @@ function calculateGrade() {
     }
 
     const grades = raw
-        .split(/[\s,;،؛]+/)
+        .split(/[\s,،;]+/)
         .filter(Boolean)
         .map(Number);
 
     if (
-        grades.some(value =>
-            !Number.isFinite(value) ||
-            value < 0 ||
-            value > 20
+        grades.length === 0 ||
+        grades.some(
+            grade => !Number.isFinite(grade) ||
+            grade < 0 ||
+            grade > 20
         )
     ) {
         return showResult(
             "gradeResult",
             language === "en"
-                ? "Grades must be between 0 and 20."
-                : "نمره‌ها باید عددی بین صفر تا ۲۰ باشند."
+                ? "Enter valid grades between 0 and 20."
+                : "نمره‌های معتبر بین ۰ تا ۲۰ وارد کنید."
         );
     }
 
-    const average = grades.reduce(
-        (sum, value) => sum + value,
-        0
-    ) / grades.length;
+    const average =
+        grades.reduce((sum, grade) => sum + grade, 0) /
+        grades.length;
 
     showResult(
         "gradeResult",
         language === "en"
-            ? `Average: ${formatNumber(average, 2)} | Number of grades: ${formatNumber(grades.length, 0)}`
-            : `معدل: ${formatNumber(average, 2)} | تعداد نمره‌ها: ${formatNumber(grades.length, 0)}`
+            ? `Your average: ${formatNumber(average, 2)}`
+            : `معدل شما: ${formatNumber(average, 2)}`
     );
-}
-
-
-/* =====================================================
-   7. تبدیل کسر و اعشار
+}/* =====================================================
+   7. تبدیل کسر به اعشار و برعکس
 ===================================================== */
 
 function fractionToDecimal() {
-    const input = document.getElementById("fractionInput");
-
-    if (!input) return;
+    const numerator = getNumber("fractionNumerator");
+    const denominator = getNumber("fractionDenominator");
 
     const language = window.ilvexGetLanguage?.() || "fa";
 
-    const value = toEnglishDigits(input.value)
-        .replace(/\s/g, "");
-
-    const match = value.match(/^(-?\d+)\/(-?\d+)$/);
-
-    if (!match) {
+    if (
+        !Number.isFinite(numerator) ||
+        !Number.isFinite(denominator)
+    ) {
         return showResult(
             "fractionResult",
             language === "en"
-                ? "Enter a fraction in the form 3/4."
-                : "کسر را به شکل ۳/۴ وارد کنید."
-        );
-    }
-
-    const numerator = Number(match[1]);
-    const denominator = Number(match[2]);
-
-    if (!Number.isFinite(numerator) ||
-        !Number.isFinite(denominator)) {
-        return showResult(
-            "fractionResult",
-            language === "en"
-                ? "The fraction is invalid."
-                : "کسر واردشده معتبر نیست."
+                ? "Please enter valid numbers."
+                : "لطفاً اعداد معتبر وارد کنید."
         );
     }
 
@@ -506,236 +482,141 @@ function fractionToDecimal() {
         );
     }
 
+    const result = numerator / denominator;
+
     showResult(
         "fractionResult",
-        formatNumber(numerator / denominator, 12)
+        formatNumber(result, 10)
     );
 }
 
+
 function decimalToFraction() {
-    const input = document.getElementById("fractionInput");
+    const input = document.getElementById("decimalInput");
 
     if (!input) return;
 
+    const value = Number(
+        toEnglishDigits(input.value).replace(/,/g, "")
+    );
+
     const language = window.ilvexGetLanguage?.() || "fa";
 
-    const value = toEnglishDigits(input.value)
-        .replace(/\s/g, "");
-
-    if (!/^-?\d+(\.\d+)?$/.test(value)) {
+    if (!Number.isFinite(value)) {
         return showResult(
-            "fractionResult",
+            "decimalResult",
             language === "en"
                 ? "Please enter a valid decimal number."
                 : "لطفاً یک عدد اعشاری معتبر وارد کنید."
         );
     }
 
-    const number = Number(value);
-    const decimals = (value.split(".")[1] || "").length;
+    const precision = 1000000;
 
-    if (!Number.isFinite(number) || decimals > 9) {
-        return showResult(
-            "fractionResult",
-            language === "en"
-                ? "Use a finite number with no more than 9 decimal places."
-                : "یک عدد معتبر با حداکثر ۹ رقم اعشار وارد کنید."
-        );
-    }
+    let numerator = Math.round(value * precision);
+    let denominator = precision;
 
-    const denominator = 10 ** decimals;
-    const numerator = Math.round(number * denominator);
     const divisor = gcd(numerator, denominator);
 
+    numerator /= divisor;
+    denominator /= divisor;
+
     showResult(
-        "fractionResult",
-        `${numerator / divisor}/${denominator / divisor}`
+        "decimalResult",
+        `${numerator} / ${denominator}`
     );
 }
 
 
 /* =====================================================
-   8. ساخت رمز عبور امن
+   8. تولید رمز عبور
 ===================================================== */
 
-function secureRandomInt(max) {
-    if (
-        !window.crypto ||
-        typeof window.crypto.getRandomValues !== "function"
-    ) {
-        throw new Error("secure-random-unavailable");
-    }
-
-    const array = new Uint32Array(1);
-    const limit = Math.floor(0x100000000 / max) * max;
-
-    let value;
-
-    do {
-        window.crypto.getRandomValues(array);
-        value = array[0];
-    } while (value >= limit);
-
-    return value % max;
-}
-
 function generatePassword() {
-    const length = getNumber("passwordLength");
+    const lengthInput = document.getElementById("passwordLength");
 
-    const upper = document.getElementById("passwordUpper");
-    const lower = document.getElementById("passwordLower");
-    const numbers = document.getElementById("passwordNumbers");
-    const symbols = document.getElementById("passwordSymbols");
-
-    const output = document.getElementById("passwordResult");
-
-    if (!output) return;
+    const length = lengthInput
+        ? Number(toEnglishDigits(lengthInput.value))
+        : 12;
 
     const language = window.ilvexGetLanguage?.() || "fa";
 
     if (
         !Number.isInteger(length) ||
-        length < 1 ||
-        length > 256
+        length < 4 ||
+        length > 128
     ) {
         return showResult(
-            "passwordMessage",
+            "passwordResult",
             language === "en"
-                ? "Password length must be between 1 and 256."
-                : "طول رمز باید بین ۱ تا ۲۵۶ باشد."
+                ? "Password length must be between 4 and 128."
+                : "طول رمز عبور باید بین ۴ تا ۱۲۸ باشد."
         );
     }
 
-    const groups = [];
+    const lowercase = "abcdefghijklmnopqrstuvwxyz";
+    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numbers = "0123456789";
+    const symbols = "!@#$%^&*()-_=+[]{}";
 
-    if (upper?.checked) {
-        groups.push("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    const characters =
+        lowercase + uppercase + numbers + symbols;
+
+    const randomValues = new Uint32Array(length);
+
+    crypto.getRandomValues(randomValues);
+
+    let password = "";
+
+    for (let i = 0; i < length; i++) {
+        password += characters[
+            randomValues[i] % characters.length
+        ];
     }
 
-    if (lower?.checked) {
-        groups.push("abcdefghijklmnopqrstuvwxyz");
-    }
+    const output = document.getElementById("passwordResult");
 
-    if (numbers?.checked) {
-        groups.push("0123456789");
-    }
-
-    if (symbols?.checked) {
-        groups.push("!@#$%^&*()-_=+[]{};:,.?");
-    }
-
-    if (!groups.length) {
-        return showResult(
-            "passwordMessage",
-            language === "en"
-                ? "Select at least one character group."
-                : "حداقل یک نوع کاراکتر را انتخاب کنید."
-        );
-    }
-
-    if (length < groups.length) {
-        return showResult(
-            "passwordMessage",
-            language === "en"
-                ? "The selected groups require a longer password."
-                : "طول رمز برای گزینه‌های انتخاب‌شده کافی نیست."
-        );
-    }
-
-    try {
-        const allCharacters = groups.join("");
-
-        const characters = groups.map(group =>
-            group[secureRandomInt(group.length)]
-        );
-
-        while (characters.length < length) {
-            characters.push(
-                allCharacters[secureRandomInt(allCharacters.length)]
-            );
-        }
-
-        // مخلوط‌کردن ترتیب نویسه‌ها
-        for (let i = characters.length - 1; i > 0; i--) {
-            const j = secureRandomInt(i + 1);
-
-            [characters[i], characters[j]] =
-                [characters[j], characters[i]];
-        }
-
-        output.value = characters.join("");
-
-        showResult(
-            "passwordMessage",
-            language === "en"
-                ? "Password generated successfully."
-                : "رمز عبور ساخته شد."
-        );
-
-    } catch {
-        showResult(
-            "passwordMessage",
-            language === "en"
-                ? "Secure password generation is unavailable in this browser."
-                : "تولید رمز امن در این مرورگر در دسترس نیست."
-        );
+    if (output) {
+        output.textContent = password;
     }
 }
 
-async function copyPassword() {
-    const input = document.getElementById("passwordResult");
 
-    if (!input || !input.value) {
-        return showResult(
-            "passwordMessage",
-            window.ilvexGetLanguage?.() === "en"
-                ? "Generate a password first."
-                : "ابتدا رمز عبور بسازید."
-        );
-    }
+async function copyPassword() {
+    const output = document.getElementById("passwordResult");
+
+    if (!output || !output.textContent.trim()) return;
 
     const language = window.ilvexGetLanguage?.() || "fa";
 
     try {
-        await navigator.clipboard.writeText(input.value);
-
-        showResult(
-            "passwordMessage",
-            language === "en"
-                ? "Password copied."
-                : "رمز عبور کپی شد."
+        await navigator.clipboard.writeText(
+            output.textContent.trim()
         );
 
-    } catch {
-        input.focus();
-        input.select();
-
-        const copied = document.execCommand("copy");
-
         showResult(
-            "passwordMessage",
-            copied
-                ? (
-                    language === "en"
-                        ? "Password copied."
-                        : "رمز عبور کپی شد."
-                )
-                : (
-                    language === "en"
-                        ? "Copy failed. Please copy the password manually."
-                        : "کپی خودکار انجام نشد؛ رمز را دستی کپی کنید."
-                )
+            "passwordCopyStatus",
+            language === "en"
+                ? "Password copied!"
+                : "رمز عبور کپی شد!"
+        );
+    } catch (error) {
+        showResult(
+            "passwordCopyStatus",
+            language === "en"
+                ? "Copy failed."
+                : "کپی کردن ناموفق بود."
         );
     }
 }
 
 
 /* =====================================================
-   9. توان و ریشه دوم
+   9. توان و ریشه
 ===================================================== */
 
 function calculatePower() {
-    const base = getNumber("powerNumber");
+    const base = getNumber("powerBase");
     const exponent = getNumber("powerExponent");
 
     const language = window.ilvexGetLanguage?.() || "fa";
@@ -747,8 +628,8 @@ function calculatePower() {
         return showResult(
             "powerResult",
             language === "en"
-                ? "Please enter a valid base and exponent."
-                : "لطفاً عدد و توان معتبر وارد کنید."
+                ? "Please enter valid numbers."
+                : "لطفاً اعداد معتبر وارد کنید."
         );
     }
 
@@ -758,38 +639,70 @@ function calculatePower() {
         return showResult(
             "powerResult",
             language === "en"
-                ? "The result cannot be represented."
+                ? "The result is invalid."
                 : "نتیجه قابل محاسبه نیست."
         );
     }
 
-    showResult("powerResult", formatNumber(result, 10));
+    showResult(
+        "powerResult",
+        formatNumber(result, 10)
+    );
 }
 
+
 function calculateRoot() {
-    const value = getNumber("powerNumber");
+    const number = getNumber("rootNumber");
+    const degree = getNumber("rootDegree");
 
     const language = window.ilvexGetLanguage?.() || "fa";
 
-    if (!Number.isFinite(value)) {
+    if (
+        !Number.isFinite(number) ||
+        !Number.isInteger(degree) ||
+        degree === 0
+    ) {
         return showResult(
-            "powerResult",
+            "rootResult",
             language === "en"
-                ? "Please enter a valid number."
-                : "لطفاً یک عدد معتبر وارد کنید."
+                ? "Enter a valid number and non-zero integer degree."
+                : "عدد و درجه ریشه معتبر وارد کنید."
         );
     }
 
-    if (value < 0) {
+    if (number < 0 && degree % 2 === 0) {
         return showResult(
-            "powerResult",
+            "rootResult",
             language === "en"
-                ? "A negative number has no real square root."
-                : "ریشه دوم عدد منفی در اعداد حقیقی تعریف نشده است."
+                ? "Even roots of negative numbers are not real."
+                : "ریشه زوج عدد منفی در اعداد حقیقی تعریف نشده است."
         );
     }
 
-    showResult("powerResult", formatNumber(Math.sqrt(value), 10));
+    let result;
+
+    if (number < 0) {
+        result = -Math.pow(
+            Math.abs(number),
+            1 / degree
+        );
+    } else {
+        result = Math.pow(number, 1 / degree);
+    }
+
+    if (!Number.isFinite(result)) {
+        return showResult(
+            "rootResult",
+            language === "en"
+                ? "The result is invalid."
+                : "نتیجه معتبر نیست."
+        );
+    }
+
+    showResult(
+        "rootResult",
+        formatNumber(result, 10)
+    );
 }
 
 
@@ -798,1525 +711,343 @@ function calculateRoot() {
 ===================================================== */
 
 function calculateDateDifference() {
-    const startValue =
-        document.getElementById("startDate")?.value;
-
-    const endValue =
-        document.getElementById("endDate")?.value;
+    const startInput = document.getElementById("startDate");
+    const endInput = document.getElementById("endDate");
 
     const language = window.ilvexGetLanguage?.() || "fa";
 
-    if (!startValue || !endValue) {
+    if (!startInput || !endInput) return;
+
+    if (!startInput.value || !endInput.value) {
         return showResult(
             "dateResult",
             language === "en"
-                ? "Select both dates."
-                : "هر دو تاریخ را انتخاب کنید."
+                ? "Please select both dates."
+                : "لطفاً هر دو تاریخ را انتخاب کنید."
         );
     }
 
-    const start = new Date(startValue + "T00:00:00Z");
-    const end = new Date(endValue + "T00:00:00Z");
+    const startDate = new Date(
+        `${startInput.value}T00:00:00`
+    );
+
+    const endDate = new Date(
+        `${endInput.value}T00:00:00`
+    );
 
     if (
-        Number.isNaN(start.getTime()) ||
-        Number.isNaN(end.getTime())
+        Number.isNaN(startDate.getTime()) ||
+        Number.isNaN(endDate.getTime())
     ) {
         return showResult(
             "dateResult",
             language === "en"
-                ? "One of the dates is invalid."
-                : "یکی از تاریخ‌ها معتبر نیست."
+                ? "Invalid date."
+                : "تاریخ واردشده معتبر نیست."
         );
     }
 
-    const days = Math.round(
-        Math.abs(end.getTime() - start.getTime()) / 86400000
+    const difference = Math.abs(
+        endDate.getTime() - startDate.getTime()
     );
 
-    showResult(
-        "dateResult",
-        language === "en"
-            ? `Date difference: ${formatNumber(days, 0)} days`
-            : `فاصله دو تاریخ: ${formatNumber(days, 0)} روز`
+    const days = Math.floor(
+        difference / (1000 * 60 * 60 * 24)
     );
+
+    const weeks = Math.floor(days / 7);
+    const remainingDays = days % 7;
+
+    const result = language === "en"
+        ? `${days} days (${weeks} weeks and ${remainingDays} days)`
+        : `${formatNumber(days, 0)} روز ( ${formatNumber(weeks, 0)} هفته و ${formatNumber(remainingDays, 0)} روز )`;
+
+    showResult("dateResult", result);
 }
 
 
 /* =====================================================
-   11. دریافت قیمت دلار و طلای ۱۸ عیار
+   11. راه‌اندازی رویدادهای ابزارها
 ===================================================== */
 
-const ilvex_MARKET_URLS = [
-    "https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json",
-    "https://cdn.jsdelivr.net/gh/iran-market/iran-market.github.io@main/data/popular.json"
-];
+document.addEventListener("DOMContentLoaded", function () {
 
-let ilvexFetchingPrices = false;
-
-async function fetchMarketJSON(url) {
-    const controller = new AbortController();
-
-    const timer = setTimeout(() => {
-        controller.abort();
-    }, 12000);
-
-    try {
-        const response = await fetch(url, {
-            cache: "no-store",
-            signal: controller.signal
-        });
-
-        if (!response.ok) {
-            throw new Error("HTTP " + response.status);
-        }
-
-        return await response.json();
-
-    } finally {
-        clearTimeout(timer);
-    }
-}
-
-async function fetchMarketPrices() {
-    if (ilvexFetchingPrices) return;
-
-    const status = document.getElementById("ratesUpdated");
-
-    // در صفحه‌هایی که ابزار ارز وجود ندارد، درخواست شبکه ارسال نکن.
-    if (
-        !status &&
-        !document.getElementById("dollarRate")
-    ) {
-        return;
-    }
-
-    ilvexFetchingPrices = true;
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    if (status) {
-        status.textContent =
-            language === "en"
-                ? "Loading dollar and gold prices..."
-                : "در حال دریافت قیمت دلار و طلا...";
-    }
-
-    try {
-        let payload = null;
-        let lastError = null;
-
-        for (const url of ilvex_MARKET_URLS) {
-            try {
-                payload = await fetchMarketJSON(url);
-                break;
-            } catch (error) {
-                lastError = error;
-            }
-        }
-
-        if (!payload) {
-            throw lastError || new Error("market-source-unavailable");
-        }
-
-        const items = Array.isArray(payload.data)
-            ? payload.data
-            : [];
-
-        const dollarItem = items.find(
-            item => item && item.symbol === "USD_IRR_FREE"
-        );
-
-        const goldItem = items.find(
-            item => item && item.symbol === "GOLD_18K_IRR"
-        );
-
-        if (!dollarItem || !goldItem) {
-            throw new Error("market-symbols-not-found");
-        }
-
-        const dollar = Number(dollarItem.price);
-        const gold = Number(goldItem.price);
-
-        if (
-            !Number.isFinite(dollar) ||
-            dollar <= 0 ||
-            !Number.isFinite(gold) ||
-            gold <= 0
-        ) {
-            throw new Error("invalid-market-price");
-        }
-
-        if (
-            dollarItem.stale === true ||
-            goldItem.stale === true
-        ) {
-            throw new Error("stale-market-data");
-        }
-
-        const dollarInput = document.getElementById("dollarRate");
-        const goldInput = document.getElementById("goldPrice");
-
-        if (dollarInput) {
-            dollarInput.value = String(dollar);
-        }
-
-        if (goldInput) {
-            goldInput.value = String(gold);
-        }
-
-        const updated =
-            payload.generated_at_tehran ||
-            payload.generated_at_jalali ||
-            payload.generated_at ||
-            payload.updated_at ||
-            "";
-
-        if (status) {
-            status.textContent =
-                language === "en"
-                    ? "Market prices received" +
-                      (updated ? " | Last updated: " + updated : "")
-                    : "قیمت‌ها دریافت شدند" +
-                      (updated ? " | آخرین به‌روزرسانی: " + updated : "");
-        }
-
-        if (document.getElementById("currencyAmount")?.value) {
-            convertDollar();
-        }
-
-        if (document.getElementById("tomanAmount")?.value) {
-            convertToman();
-        }
-
-        if (document.getElementById("goldWeight")?.value) {
-            calculateGold();
-        }
-
-        console.info("ilvex: Market prices received.", {
-            dollar,
-            gold,
-            updated
-        });
-
-    } catch (error) {
-        console.error("ilvex market price error:", error);
-
-        if (status) {
-            status.textContent =
-                language === "en"
-                    ? "Automatic price retrieval failed. Check your connection or the price source."
-                    : "دریافت خودکار قیمت ناموفق بود؛ اتصال یا منبع قیمت را بررسی کنید.";
-        }
-
-    } finally {
-        ilvexFetchingPrices = false;
-    }
-}
-
-
-/* =====================================================
-   12. تبدیل دلار به تومان
-===================================================== */
-
-function convertDollar() {
-    const rate = getNumber("dollarRate");
-    const amount = getNumber("currencyAmount");
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    if (!Number.isFinite(amount) || amount < 0) {
-        return showResult(
-            "dollarResult",
-            language === "en"
-                ? "Please enter a valid dollar amount."
-                : "مقدار دلار را درست وارد کنید."
-        );
-    }
-
-    if (!Number.isFinite(rate) || rate <= 0) {
-        return showResult(
-            "dollarResult",
-            language === "en"
-                ? "The dollar rate has not been received yet."
-                : "قیمت دلار هنوز دریافت نشده است."
-        );
-    }
-
-    const result = formatNumber(amount * rate, 0);
-
-    showResult(
-        "dollarResult",
-        language === "en"
-            ? `${result} toman`
-            : `${result} تومان`
-    );
-}
-
-
-/* =====================================================
-   13. تبدیل تومان به دلار
-===================================================== */
-
-function convertToman() {
-    const rate = getNumber("dollarRate");
-    const amount = getNumber("tomanAmount");
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    if (!Number.isFinite(amount) || amount < 0) {
-        return showResult(
-            "tomanResult",
-            language === "en"
-                ? "Please enter a valid Toman amount."
-                : "مبلغ تومان را درست وارد کنید."
-        );
-    }
-
-    if (!Number.isFinite(rate) || rate <= 0) {
-        return showResult(
-            "tomanResult",
-            language === "en"
-                ? "The dollar rate has not been received yet."
-                : "قیمت دلار هنوز دریافت نشده است."
-        );
-    }
-
-    const result = formatNumber(amount / rate, 4);
-
-    showResult(
-        "tomanResult",
-        language === "en"
-            ? `${result} USD`
-            : `${result} دلار`
-    );
-}
-
-
-/* =====================================================
-   14. محاسبه ارزش طلا
-===================================================== */
-
-function calculateGold() {
-    const price = getNumber("goldPrice");
-    const weight = getNumber("goldWeight");
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    if (!Number.isFinite(weight) || weight < 0) {
-        return showResult(
-            "goldResult",
-            language === "en"
-                ? "Please enter a valid gold weight."
-                : "وزن طلا را درست وارد کنید."
-        );
-    }
-
-    if (!Number.isFinite(price) || price <= 0) {
-        return showResult(
-            "goldResult",
-            language === "en"
-                ? "The 18K gold price has not been received yet."
-                : "قیمت طلای ۱۸ عیار هنوز دریافت نشده است."
-        );
-    }
-
-    const result = formatNumber(price * weight, 0);
-
-    showResult(
-        "goldResult",
-        language === "en"
-            ? `${result} toman`
-            : `${result} تومان`
-    );
-}
-
-
-/* =====================================================
-   15. ترجمه فارسی و انگلیسی
-===================================================== */
-
-const ilvex_TRANSLATIONS = {
-    "خانه": "Home",
-    "ابزارها": "Tools",
-    "درباره ما": "About",
-    "باز کردن منو": "Open menu",
-
-    "چرا ilvex؟": "Why ilvex?",
-    "سریع": "Fast",
-    "کاربردی": "Practical",
-    "ساده": "Simple",
-
-    "ابزارها برای انجام سریع کارها طراحی شده‌اند.":
-        "Our tools are designed to help you get things done faster.",
-
-    "ابزارهایی که واقعاً در کارهای روزمره به درد می‌خورند.":
-        "Useful tools for everyday tasks.",
-
-    "بدون پیچیدگی؛ فقط وارد شو و از ابزار استفاده کن.":
-        "No complications. Just open a tool and use it.",
-
-    "ilvex برای چه کسانی است؟":
-        "Who is ilvex for?",
-
-    "برای دانش‌آموزان، دانشجویان و هر کسی که به ابزارهای کاربردی نیاز دارد.":
-        "For school students, university students, and anyone who needs useful tools.",
-
-    "دانش‌آموزان": "School Students",
-    "ابزارهایی برای درس، مدرسه و پروژه‌ها.":
-        "Tools for studying, schoolwork, and projects.",
-
-    "دانشجویان": "University Students",
-    "ابزارهایی برای ساده‌تر شدن کارهای دانشجویی.":
-        "Tools to make university work easier.",
-
-    "همه افراد": "Everyone",
-    "ابزارهای ساده و کاربردی برای کارهای روزمره.":
-        "Simple and useful tools for everyday life.",
-
-    "آماده‌ای شروع کنی؟": "Ready to get started?",
-    "وارد ilvex شو و ابزار مناسب خودت رو پیدا کن.":
-        "Explore ilvex and find the right tools for you.",
-
-    "ورود به ابزارها": "Explore Tools",
-
-    "ilvex مجموعه‌ای از ابزارهای ساده، سریع و کاربردی است که برای دانش‌آموزان طراحی شده است. ما تلاش می‌کنیم کارهای وقت‌گیر، مانند محاسبات و کارهای روزمره را تا حد امکان ساده‌تر کنیم.":
-        "ilvex is a collection of simple, fast, and practical tools designed for students. We aim to make time-consuming tasks, calculations, and everyday activities easier.",
-
-    "درباره ilvex": "About ilvex",
-
-    "ilvex یک مجموعه ابزار ساده، کاربردی و سریع است که برای کمک به انجام کارهای روزمره، آموزشی و دانش‌آموزی ساخته شده است.":
-        "ilvex is a collection of simple, practical, and fast tools designed to help with everyday activities, learning, and schoolwork.",
-
-    "هدف ما": "Our Mission",
-
-    "هدف ilvex این است که ابزارهای کاربردی را بدون پیچیدگی و به ساده‌ترین شکل در اختیار کاربران قرار دهد.":
-        "ilvex aims to provide useful tools in the simplest way possible, without unnecessary complexity.",
-
-    "بخشی از ابزارهای ilvex برای درس، مدرسه، محاسبات و کارهای روزمره دانش‌آموزان طراحی شده‌اند.":
-        "Some ilvex tools are designed for schoolwork, calculations, and students' everyday tasks.",
-
-    "برای دانش‌آموزان": "For Students",
-    "برنامه‌نویس ilvex": "ilvex Developer",
-    "ilvex توسط": "Designed and developed by",
-    "طراحی و توسعه داده شده است.": ".",
-
-    "در حال توسعه": "Under Development",
-
-    "ilvex یک پروژه در حال توسعه است و قرار است در آینده ابزارهای بیشتری به آن اضافه شود.":
-        "ilvex is an ongoing project, and more tools are planned for future updates.",
-
-    "کانال بله": "Bale Channel",
-
-    "برای دنبال کردن اخبار، پروژه‌ها و آخرین فعالیت‌های ilvex می‌توانید به کانال ما در بله بپیوندید.":
-        "Follow ilvex news, projects, and updates by joining our channel on Bale.",
-
-    "ورود به کانال": "Join the Channel",
-
-    "ابزارهای ilvex": "ilvex Tools",
-
-    "ابزارهایی کاربردی، سریع و ساده برای انجام کارهای روزمره؛ همه در یک پلتفرم و در دسترس شما.":
-        "Practical, fast, and simple tools for everyday tasks, all in one convenient platform.",
-
-    "جست‌وجو بین ابزارها...": "Search tools...",
-    "جست‌وجوی ابزارها": "Search tools",
-    "همه ابزارها": "All Tools",
-    "ابزاری با این نام پیدا نشد.": "No matching tools found.",
-
-    "شمارش متن": "Text Counter",
-
-    "تعداد کلمات، حروف، کاراکترها و خطوط متن خود را محاسبه کنید.":
-        "Count the words, characters, and lines in your text.",
-
-    "متن خود را وارد کنید تا آمار آن نمایش داده شود.":
-        "Enter your text to see its statistics.",
-
-    "متن شما": "Your Text",
-    "متن را اینجا بنویسید...": "Type your text here...",
-    "تعداد کلمات:": "Words:",
-    "تعداد حروف و کاراکترها:": "Characters:",
-    "کاراکتر بدون فاصله:": "Characters without spaces:",
-    "تعداد خطوط:": "Lines:",
-
-    "ماشین حساب": "Calculator",
-    "محاسبات ریاضی روزمره را به‌سادگی انجام دهید.":
-        "Perform everyday mathematical calculations easily.",
-
-    "عبارت ریاضی خود را وارد کنید.":
-        "Enter a mathematical expression.",
-
-    "عبارت ریاضی": "Expression",
-    "محاسبه": "Calculate",
-
-    "عملگرهای پایه پشتیبانی می‌شوند: + ، − ، × ، ÷ و پرانتز.":
-        "Supported operators: +, −, ×, ÷, and parentheses.",
-
-    "تبدیل واحد": "Unit Converter",
-    "تبدیل واحد طول": "Length Unit Converter",
-
-    "واحدهای طول را به کیلومتر، متر، سانتی‌متر و میلی‌متر تبدیل کنید.":
-        "Convert lengths between kilometers, meters, centimeters, and millimeters.",
-
-    "مقدار و واحد مبدأ و مقصد را انتخاب کنید.":
-        "Enter a value and select the source and target units.",
-
-    "مقدار": "Value",
-    "مقدار را وارد کنید": "Enter a value",
-    "تبدیل از": "Convert from",
-    "تبدیل به": "Convert to",
-    "میلی‌متر": "Millimeters",
-    "سانتی‌متر": "Centimeters",
-    "متر": "Meters",
-    "کیلومتر": "Kilometers",
-    "تبدیل واحد طول": "Length Unit Converter",
-
-    "محاسبه معدل": "Grade Average",
-
-    "نمره‌های خود را وارد کنید و میانگین آن‌ها را به دست آورید.":
-        "Enter your grades and calculate their average.",
-
-    "نمره‌ها را با فاصله یا ویرگول از هم جدا کنید.":
-        "Separate grades using spaces or commas.",
-
-    "نمره‌ها از ۰ تا ۲۰": "Grades from 0 to 20",
-    "محاسبه معدل": "Calculate Average",
-
-    "این ابزار میانگین ساده نمره‌ها را محاسبه می‌کند. برای معدل وزنی، ضریب هر درس باید جداگانه وارد شود.":
-        "This tool calculates a simple average. For a weighted average, each subject's coefficient must be entered separately.",
-
-    "تبدیل کسر و اعشار": "Fraction & Decimal Converter",
-
-    "کسرها را به عدد اعشاری و اعداد اعشاری را به کسر تبدیل کنید.":
-        "Convert fractions to decimals and decimals to fractions.",
-
-    "یک کسر مثل 3/4 یا یک عدد اعشاری وارد کنید.":
-        "Enter a fraction such as 3/4 or a decimal number.",
-
-    "کسر یا عدد": "Fraction or Number",
-    "کسر به اعشار": "Fraction to Decimal",
-    "اعشار به کسر": "Decimal to Fraction",
-
-    "ساخت رمز عبور": "Password Generator",
-    "رمز تصادفی با حروف، اعداد و نمادها بسازید.":
-        "Create a random password using letters, numbers, and symbols.",
-
-    "طول رمز عبور": "Password Length",
-    "حروف بزرگ انگلیسی": "Uppercase Letters",
-    "حروف کوچک انگلیسی": "Lowercase Letters",
-    "اعداد": "Numbers",
-    "نمادهای خاص": "Special Symbols",
-    "رمز ساخته‌شده": "Generated Password",
-    "رمز شما اینجا نمایش داده می‌شود": "Your password will appear here",
-    "ساخت رمز جدید": "Generate New Password",
-    "کپی رمز": "Copy Password",
-
-    "توان و ریشه": "Powers & Roots",
-    "توان اعداد و ریشه دوم آن‌ها را محاسبه کنید.":
-        "Calculate powers and square roots.",
-
-    "برای اعداد صحیح بزرگ نیز می‌توانید از محاسبه توان استفاده کنید.":
-        "You can also calculate powers of large integers.",
-
-    "عدد پایه": "Base Number",
-    "توان": "Exponent",
-    "محاسبه توان": "Calculate Power",
-    "محاسبه ریشه دوم": "Calculate Square Root",
-
-    "محاسبات اعداد صحیح بزرگ ممکن است بسته به اندازه عدد، زمان و حافظه بیشتری نیاز داشته باشند.":
-        "Calculations involving very large integers may require additional time and memory.",
-
-    "محاسبه اختلاف تاریخ": "Date Difference",
-
-    "اختلاف دو تاریخ را بر اساس تعداد واقعی روزها محاسبه کنید.":
-        "Calculate the number of days between two dates.",
-
-    "دو تاریخ را انتخاب کنید تا اختلاف روزها و تفکیک تقویمی محاسبه شود.":
-        "Select two dates to calculate the difference in days.",
-
-    "تاریخ شروع": "Start Date",
-    "تاریخ پایان": "End Date",
-
-    "انتخاب تاریخ در این نسخه با تقویم میلادی مرورگر انجام می‌شود. تاریخ شمسی نیز در نتیجه نمایش داده می‌شود.":
-        "This version uses your browser's Gregorian calendar for date selection.",
-
-    "ارز و طلا": "Currency & Gold",
-    "تبدیل دلار و تومان و محاسبه ارزش تقریبی طلای ۱۸ عیار.":
-        "Convert dollars and toman and estimate the value of 18K gold.",
-
-    "نرخ‌های دریافت‌شده از منبع آنلاین را بررسی کنید و تبدیل انجام دهید.":
-        "Check the online exchange rates and perform conversions.",
-
-    "قیمت هر دلار به تومان": "Price per US Dollar (Toman)",
-    "در حال دریافت نرخ...": "Loading rate...",
-    "تبدیل دلار به تومان": "USD to Toman",
-    "مقدار دلار": "Amount in USD",
-    "تبدیل به تومان": "Convert to Toman",
-    "تبدیل تومان به دلار": "Toman to USD",
-    "مبلغ به تومان": "Amount in Toman",
-    "تبدیل به دلار": "Convert to USD",
-    "محاسبه ارزش طلای ۱۸ عیار": "Calculate 18K Gold Value",
-    "قیمت هر گرم طلا به تومان": "Price per Gram of Gold (Toman)",
-    "وزن طلا به گرم": "Gold Weight (grams)",
-    "محاسبه ارزش طلا": "Calculate Gold Value",
-
-    "قیمت‌ها تقریبی هستند و ممکن است با بازار تفاوت داشته باشند. اجرت، مالیات و سود فروشنده در محاسبه طلا لحاظ نشده است.":
-        "Prices are estimates and may differ from the market. Making charges, taxes, and seller fees are not included.",
-
-    "ساخته‌شده با 💙 برای ساده‌تر کردن کارهای روزمره":
-        "Made with 💙 to make everyday tasks easier.",
-
-    "ilvex 2.0": "ilvex 2.0",
-
-    "ابزارهایی کاربردی، سریع و ساده برای انجام کارهای روزمره؛ همه در یک پلتفرم و در دسترس شما.":
-        "Practical, fast, and simple tools for everyday tasks, all in one convenient platform."
-};
-
-
-/* =====================================================
-   16. ویژگی‌های قابل ترجمه
-===================================================== */
-
-const ilvex_ATTRIBUTE_TRANSLATIONS = {
-    "باز کردن منو": "Open menu",
-    "بستن": "Close",
-    "جست‌وجوی ابزارها": "Search tools",
-    "جست‌وجو بین ابزارها...": "Search tools...",
-    "متن را اینجا بنویسید...": "Type your text here...",
-    "مثال: (12 + 8) * 2": "Example: (12 + 8) * 2",
-    "مثال: 3/4 یا 0.75": "Example: 3/4 or 0.75",
-    "در حال دریافت نرخ...": "Loading rate..."
-};
-
-
-/* =====================================================
-   17. موتور تغییر زبان
-===================================================== */
-
-(function setupilvexLanguage() {
-    const STORAGE_KEY = "ilvex-language";
-
-    let currentLanguage = "fa";
-
-    const originalText = new WeakMap();
-    const originalAttributes = new WeakMap();
-
-    function normalize(value) {
-        return String(value).replace(/\s+/g, " ").trim();
-    }
-
-    function findPersianTranslation(englishText) {
-        const wanted = normalize(englishText);
-
-        return Object.entries(ilvex_TRANSLATIONS).find(
-            ([persian, english]) => normalize(english) === wanted
-        )?.[0];
-    }
-
-    function translateValue(original, language) {
-        const clean = normalize(original);
-
-        if (language === "fa") {
-            return original;
-        }
-
-        if (Object.hasOwn(ilvex_TRANSLATIONS, clean)) {
-            return ilvex_TRANSLATIONS[clean];
-        }
-
-        // ترجمه پیام‌های پویا
-        if (/^معدل:\s*(.+?)\s*\|\s*تعداد نمره‌ها:\s*(.+)$/.test(clean)) {
-            return clean.replace(
-                /^معدل:\s*(.+?)\s*\|\s*تعداد نمره‌ها:\s*(.+)$/,
-                "Average: $1 | Number of grades: $2"
-            );
-        }
-
-        if (/^فاصله دو تاریخ:\s*(.+)\s*روز$/.test(clean)) {
-            return clean.replace(
-                /^فاصله دو تاریخ:\s*(.+)\s*روز$/,
-                "Date difference: $1 days"
-            );
-        }
-
-        if (/^قیمت‌ها دریافت شدند/.test(clean)) {
-            return clean
-                .replace(/^قیمت‌ها دریافت شدند/, "Market prices received")
-                .replace("آخرین به‌روزرسانی:", "Last updated:");
-        }
-
-        const englishTranslation = findPersianTranslation(clean);
-
-        if (englishTranslation) {
-            return englishTranslation;
-        }
-
-        // ترجمه اعداد فارسی به اعداد انگلیسی در حالت English
-        return original.replace(/[۰-۹]/g, digit =>
-            "۰۱۲۳۴۵۶۷۸۹".indexOf(digit)
-        );
-    }
-
-    function translateTextNode(node) {
-        if (
-            !node ||
-            !node.parentElement ||
-            node.parentElement.closest(
-                "script, style, textarea, code, [data-language-toggle]"
-            )
-        ) {
-            return;
-        }
-
-        if (!originalText.has(node)) {
-            originalText.set(node, node.nodeValue);
-        }
-
-        const original = originalText.get(node);
-
-        if (!original || !normalize(original)) return;
-
-        let replacement;
-
-        if (currentLanguage === "en") {
-            replacement = translateValue(original, "en");
-        } else {
-            replacement = original;
-        }
-
-        if (node.nodeValue !== replacement) {
-            node.nodeValue = replacement;
-        }
-    }
-
-    function translateAttributes(element) {
-        const names = [
-            "placeholder",
-            "aria-label",
-            "title",
-            "alt"
-        ];
-
-        if (!originalAttributes.has(element)) {
-            originalAttributes.set(element, {});
-        }
-
-        const saved = originalAttributes.get(element);
-
-        names.forEach(name => {
-            if (!element.hasAttribute(name)) return;
-
-            if (!(name in saved)) {
-                saved[name] = element.getAttribute(name);
-            }
-
-            const original = saved[name];
-
-            if (currentLanguage === "en") {
-                element.setAttribute(
-                    name,
-                    ilvex_ATTRIBUTE_TRANSLATIONS[original] || original
-                );
-            } else {
-                element.setAttribute(name, original);
-            }
-        });
-    }
-
-    function updateToggleButtons() {
-        document.querySelectorAll("[data-language-toggle]").forEach(button => {
-            button.textContent =
-                currentLanguage === "en"
-                    ? "🌐 فارسی"
-                    : "🌐 English";
-
-            button.setAttribute(
-                "aria-label",
-                currentLanguage === "en"
-                    ? "Switch to Persian"
-                    : "Switch to English"
-            );
-        });
-    }
-
-    function ensureLanguageButton() {
-        // صفحات دارای هدر عمومی
-        const header = document.querySelector(".header");
-
-        if (header && !header.querySelector("[data-language-toggle]")) {
-            const button = document.createElement("button");
-
-            button.type = "button";
-            button.className = "language-toggle";
-            button.dataset.languageToggle = "true";
-            button.textContent = "🌐 English";
-
-            const menu = header.querySelector(".menu");
-
-            if (menu) {
-                header.appendChild(button);
-            } else {
-                header.appendChild(button);
-            }
-        }
-
-        // صفحه ابزارها، که هدر متفاوتی دارد
-        const toolsHero = document.querySelector(".tools-hero");
-
-        if (
-            toolsHero &&
-            !toolsHero.querySelector("[data-language-toggle]")
-        ) {
-            const row = document.createElement("div");
-
-            row.className = "tools-language-row";
-
-            const button = document.createElement("button");
-
-            button.type = "button";
-            button.className = "language-toggle";
-            button.dataset.languageToggle = "true";
-            button.textContent = "🌐 English";
-
-            row.appendChild(button);
-            toolsHero.prepend(row);
-        }
-    }
-
-    function applyLanguage(language) {
-        currentLanguage = language === "en" ? "en" : "fa";
-
-        try {
-            localStorage.setItem(STORAGE_KEY, currentLanguage);
-        } catch (error) {
-            console.warn(
-                "ilvex: Could not save language preference.",
-                error
-            );
-        }
-
-        // تنظیم جهت صفحه
-        document.documentElement.lang = currentLanguage;
-        document.documentElement.dir =
-            currentLanguage === "en" ? "ltr" : "rtl";
-
-        document.body.style.direction =
-            currentLanguage === "en" ? "ltr" : "rtl";
-
-        document.body.style.fontFamily =
-            currentLanguage === "en"
-                ? "Arial, Helvetica, sans-serif"
-                : "";
-
-        // عنوان صفحه
-        const title = document.querySelector("title");
-
-        if (title) {
-            if (!title.dataset.originalTitle) {
-                title.dataset.originalTitle = title.textContent;
-            }
-
-            const originalTitle = title.dataset.originalTitle;
-
-            if (currentLanguage === "en") {
-                title.textContent =
-                    ilvex_TRANSLATIONS[normalize(originalTitle)] ||
-                    originalTitle;
-            } else {
-                title.textContent = originalTitle;
-            }
-        }
-
-        // ترجمه متن‌های صفحه
-        const walker = document.createTreeWalker(
-            document.body,
-            NodeFilter.SHOW_TEXT
-        );
-
-        const nodes = [];
-
-        while (walker.nextNode()) {
-            nodes.push(walker.currentNode);
-        }
-
-        nodes.forEach(translateTextNode);
-
-        document.querySelectorAll(
-            "input, textarea, select, button, img, a"
-        ).forEach(translateAttributes);
-
-        updateToggleButtons();
-        updateLanguageStyles();
-    }
-
-    function updateLanguageStyles() {
-        let style = document.getElementById("ilvex-language-styles");
-
-        if (!style) {
-            style = document.createElement("style");
-            style.id = "ilvex-language-styles";
-
-            style.textContent = `
-                .language-toggle {
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 8px;
-                    min-height: 42px;
-                    padding: 10px 14px;
-                    border: 1px solid rgba(105,195,255,.4);
-                    border-radius: 12px;
-                    color: #c6e8ff;
-                    background: rgba(22,131,255,.13);
-                    font-family: inherit;
-                    font-size: 13px;
-                    font-weight: 700;
-                    white-space: nowrap;
-                    cursor: pointer;
-                    transition: background .2s ease,
-                                border-color .2s ease,
-                                box-shadow .2s ease;
-                }
-
-                .language-toggle:hover {
-                    background: rgba(22,131,255,.25);
-                    border-color: #69c3ff;
-                    box-shadow: 0 0 18px rgba(22,131,255,.2);
-                }
-
-                .language-toggle:focus-visible {
-                    outline: 2px solid #69c3ff;
-                    outline-offset: 3px;
-                }
-
-                .tools-language-row {
-                    display: flex;
-                    justify-content: flex-end;
-                    width: 100%;
-                    margin-bottom: 12px;
-                }
-
-                @media (max-width: 700px) {
-                    .language-toggle {
-                        min-height: 39px;
-                        padding: 8px 10px;
-                        font-size: 12px;
-                    }
-                }
-
-                @media (prefers-reduced-motion: reduce) {
-                    .language-toggle {
-                        transition: none;
-                    }
-                }
-            `;
-
-            document.head.appendChild(style);
-        }
-    }
-
-    function initLanguageSystem() {
-        ensureLanguageButton();
-
-        let savedLanguage = "fa";
-
-        try {
-            const saved = localStorage.getItem(STORAGE_KEY);
-
-            if (saved === "fa" || saved === "en") {
-                savedLanguage = saved;
-            }
-        } catch (error) {
-            console.warn(
-                "ilvex: Could not read language preference.",
-                error
-            );
-        }
-
-        document.querySelectorAll("[data-language-toggle]").forEach(button => {
-            button.addEventListener("click", () => {
-                applyLanguage(
-                    currentLanguage === "fa" ? "en" : "fa"
-                );
-            });
-        });
-
-        applyLanguage(savedLanguage);
-
-        // نظارت بر نتایج جدید ابزارها
-        const observer = new MutationObserver(records => {
-            records.forEach(record => {
-                if (record.type === "characterData") {
-                    translateTextNode(record.target);
-                }
-
-                record.addedNodes?.forEach(node => {
-                    if (node.nodeType === Node.TEXT_NODE) {
-                        translateTextNode(node);
-                    } else if (node.nodeType === Node.ELEMENT_NODE) {
-                        if (node.matches?.("[data-language-toggle]")) {
-                            node.textContent =
-                                currentLanguage === "en"
-                                    ? "🌐 فارسی"
-                                    : "🌐 English";
-                        }
-
-                        const walker = document.createTreeWalker(
-                            node,
-                            NodeFilter.SHOW_TEXT
-                        );
-
-                        const addedTextNodes = [];
-
-                        while (walker.nextNode()) {
-                            addedTextNodes.push(walker.currentNode);
-                        }
-
-                        addedTextNodes.forEach(translateTextNode);
-
-                        node.querySelectorAll?.(
-                            "input, textarea, select, button, img, a"
-                        ).forEach(translateAttributes);
-                    }
-                });
-            });
-        });
-
-        observer.observe(document.body, {
-            subtree: true,
-            childList: true,
-            characterData: true
-        });
-    }
-
-    window.ilvexSetLanguage = applyLanguage;
-    window.ilvexGetLanguage = () => currentLanguage;
-
-    if (document.readyState === "loading") {
-        document.addEventListener(
-            "DOMContentLoaded",
-            initLanguageSystem,
-            { once: true }
-        );
-    } else {
-        initLanguageSystem();
-    }
-})();
-
-
-/* =====================================================
-   18. منوی موبایل و آماده‌سازی ابزارها
-===================================================== */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    // شمارش زنده متن
     const textInput = document.getElementById("textInput");
 
     if (textInput) {
-        textInput.addEventListener("input", updateTextCounts);
+        textInput.addEventListener(
+            "input",
+            updateTextCounts
+        );
+
         updateTextCounts();
     }
 
-    // بستن پنجره‌ها با کلیک روی پس‌زمینه
+    const calcInput = document.getElementById("calcInput");
+
+    if (calcInput) {
+        calcInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                calculate();
+            }
+        });
+    }
+
+    document.querySelectorAll("[data-close-modal]").forEach(button => {
+        button.addEventListener("click", function () {
+            const modal = button.closest(".modal, .tool-modal");
+
+            if (modal && modal.id) {
+                closeTool(modal.id);
+            }
+        });
+    });
+
     document.querySelectorAll(".modal, .tool-modal").forEach(modal => {
-        modal.addEventListener("click", event => {
+        modal.addEventListener("click", function (event) {
             if (event.target === modal) {
                 closeTool(modal.id);
             }
         });
     });
 
-    // بستن پنجره‌ها با Escape
-    document.addEventListener("keydown", event => {
-        if (event.key === "Escape") {
-            document.querySelectorAll(".modal, .tool-modal").forEach(modal => {
-                if (getComputedStyle(modal).display !== "none") {
-                    closeTool(modal.id);
-                }
-            });
+});/* =====================================================
+   12. دریافت قیمت ارز و طلا
+===================================================== */
+
+const ILVEX_MARKET_API = {
+    currency: "https://api.exchangerate-api.com/v4/latest/USD",
+    gold: "https://api.gold-api.com/price/XAU"
+};
+
+async function fetchCurrencyPrices() {
+    const language = window.ilvexGetLanguage?.() || "fa";
+
+    try {
+        const response = await fetch(ILVEX_MARKET_API.currency);
+
+        if (!response.ok) {
+            throw new Error("Currency API error");
+        }
+
+        const data = await response.json();
+
+        const rates = data.rates;
+
+        if (!rates) {
+            throw new Error("Invalid currency data");
+        }
+
+        const usdToEur = rates.EUR;
+        const usdToTry = rates.TRY;
+        const usdToGbp = rates.GBP;
+
+        showResult(
+            "eurRate",
+            usdToEur
+                ? formatNumber(usdToEur, 4)
+                : "—"
+        );
+
+        showResult(
+            "tryRate",
+            usdToTry
+                ? formatNumber(usdToTry, 2)
+                : "—"
+        );
+
+        showResult(
+            "gbpRate",
+            usdToGbp
+                ? formatNumber(usdToGbp, 4)
+                : "—"
+        );
+
+        showResult(
+            "currencyUpdate",
+            language === "en"
+                ? "Prices updated successfully."
+                : "قیمت‌ها با موفقیت به‌روزرسانی شدند."
+        );
+
+    } catch (error) {
+        showResult(
+            "currencyUpdate",
+            language === "en"
+                ? "Unable to retrieve currency prices."
+                : "دریافت قیمت ارز امکان‌پذیر نیست."
+        );
+
+        console.error("ILVEX Currency Error:", error);
+    }
+}
+
+
+/* =====================================================
+   13. دریافت قیمت جهانی طلا
+===================================================== */
+
+async function fetchGoldPrice() {
+    const language = window.ilvexGetLanguage?.() || "fa";
+
+    try {
+        const response = await fetch(ILVEX_MARKET_API.gold);
+
+        if (!response.ok) {
+            throw new Error("Gold API error");
+        }
+
+        const data = await response.json();
+
+        const price = Number(
+            data.price || data.ask || data.bid
+        );
+
+        if (!Number.isFinite(price)) {
+            throw new Error("Invalid gold price");
+        }
+
+        showResult(
+            "goldPrice",
+            formatNumber(price, 2)
+        );
+
+        showResult(
+            "goldUpdate",
+            language === "en"
+                ? "Gold price updated."
+                : "قیمت طلا به‌روزرسانی شد."
+        );
+
+    } catch (error) {
+        showResult(
+            "goldUpdate",
+            language === "en"
+                ? "Unable to retrieve gold price."
+                : "دریافت قیمت طلا امکان‌پذیر نیست."
+        );
+
+        console.error("ILVEX Gold Error:", error);
+    }
+}
+
+
+/* =====================================================
+   14. به‌روزرسانی اطلاعات بازار
+===================================================== */
+
+async function updateMarketPrices() {
+    await Promise.allSettled([
+        fetchCurrencyPrices(),
+        fetchGoldPrice()
+    ]);
+}
+
+
+/* =====================================================
+   15. زمان آخرین به‌روزرسانی
+===================================================== */
+
+function updateMarketTime() {
+    const language = window.ilvexGetLanguage?.() || "fa";
+
+    const now = new Date();
+
+    const formatted = new Intl.DateTimeFormat(
+        language === "en" ? "en-US" : "fa-IR",
+        {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        }
+    ).format(now);
+
+    showResult(
+        "marketLastUpdate",
+        language === "en"
+            ? `Last update: ${formatted}`
+            : `آخرین به‌روزرسانی: ${formatted}`
+    );
+}
+
+
+/* =====================================================
+   16. مدیریت منوی موبایل
+===================================================== */
+
+function setupMobileMenu() {
+    const menuButton = document.getElementById("menuToggle");
+
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    if (!menuButton || !mobileMenu) return;
+
+    function closeMenu() {
+        mobileMenu.classList.remove("active");
+
+        menuButton.classList.remove("active");
+
+        menuButton.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleMenu() {
+        const isOpen = mobileMenu.classList.toggle("active");
+
+        menuButton.classList.toggle("active", isOpen);
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            String(isOpen)
+        );
+    }
+
+    menuButton.addEventListener("click", function (event) {
+        event.stopPropagation();
+
+        toggleMenu();
+    });
+
+    mobileMenu.addEventListener("click", function (event) {
+        const link = event.target.closest("a");
+
+        if (link) {
+            closeMenu();
+        }
+
+        event.stopPropagation();
+    });
+
+    document.addEventListener("click", function (event) {
+        if (
+            !mobileMenu.contains(event.target) &&
+            !menuButton.contains(event.target)
+        ) {
+            closeMenu();
         }
     });
 
-    // منوی موبایل
-    const menuButton = document.getElementById("menuBtn");
-    const menu = document.getElementById("menu");
-    const menuOverlay = document.getElementById("menuOverlay");
-
-    if (menuButton && menu) {
-        menuButton.addEventListener("click", () => {
-            const isOpen = menu.classList.toggle("active");
-
-            menuButton.setAttribute("aria-expanded", String(isOpen));
-
-            if (menuOverlay) {
-                menuOverlay.classList.toggle("active", isOpen);
-            }
-        });
-
-        menu.querySelectorAll("a").forEach(link => {
-            link.addEventListener("click", () => {
-                menu.classList.remove("active");
-                menuButton.setAttribute("aria-expanded", "false");
-
-                if (menuOverlay) {
-                    menuOverlay.classList.remove("active");
-                }
-            });
-        });
-
-        if (menuOverlay) {
-            menuOverlay.addEventListener("click", () => {
-                menu.classList.remove("active");
-                menuButton.setAttribute("aria-expanded", "false");
-                menuOverlay.classList.remove("active");
-            });
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeMenu();
         }
-    }
+    });
+}
 
-    // دریافت قیمت فقط در صفحه‌ای که ابزار ارز وجود دارد.
-    if (
-        document.getElementById("ratesUpdated") ||
-        document.getElementById("dollarRate")
-    ) {
-        fetchMarketPrices();
 
-        setInterval(fetchMarketPrices, 30 * 60 * 1000);
-    }
-});/* =====================================================
-   ilvex 2.0 — EXTENDED TRANSLATIONS PATCH
-   Additional Persian / English translations
+/* =====================================================
+   17. راه‌اندازی ابزارها و منو
 ===================================================== */
 
-(function () {
-    "use strict";
+document.addEventListener("DOMContentLoaded", function () {
 
-    const extraTranslations = {
-        /* Navigation */
-        "خانه": "Home",
-        "ابزارها": "Tools",
-        "درباره ما": "About",
-        "باز کردن منو": "Open menu",
+    setupMobileMenu();
 
-        /* Homepage */
-        "چرا ilvex؟": "Why ilvex?",
-        "سریع": "Fast",
-        "کاربردی": "Practical",
-        "ساده": "Simple",
+    updateMarketPrices();
 
-        "ابزارها برای انجام سریع کارها طراحی شده‌اند.":
-            "Our tools help you get things done faster.",
+    updateMarketTime();
 
-        "ابزارهایی که واقعاً در کارهای روزمره به درد می‌خورند.":
-            "Useful tools for everyday tasks.",
+    setInterval(updateMarketPrices, 5 * 60 * 1000);
 
-        "بدون پیچیدگی؛ فقط وارد شو و از ابزار استفاده کن.":
-            "No complications. Just open a tool and use it.",
+    setInterval(updateMarketTime, 1000);
 
-        "ilvex برای چه کسانی است؟":
-            "Who is ilvex for?",
-
-        "برای دانش‌آموزان، دانشجویان و هر کسی که به ابزارهای کاربردی نیاز دارد.":
-            "For students and anyone who needs useful tools.",
-
-        "دانش‌آموزان": "School Students",
-        "دانشجویان": "University Students",
-        "همه افراد": "Everyone",
-
-        "ابزارهایی برای درس، مدرسه و پروژه‌ها.":
-            "Tools for studying, schoolwork, and projects.",
-
-        "ابزارهایی برای ساده‌تر شدن کارهای دانشجویی.":
-            "Tools to make university work easier.",
-
-        "ابزارهای ساده و کاربردی برای کارهای روزمره.":
-            "Simple and useful tools for everyday life.",
-
-        "آماده‌ای شروع کنی؟": "Ready to get started?",
-
-        "وارد ilvex شو و ابزار مناسب خودت رو پیدا کن.":
-            "Explore ilvex and find the right tools for you.",
-
-        "ورود به ابزارها": "Explore Tools",
-
-        "ilvex مجموعه‌ای از ابزارهای ساده، سریع و کاربردی است که برای دانش‌آموزان طراحی شده است. ما تلاش می‌کنیم کارهای وقت‌گیر، مانند محاسبات و کارهای روزمره را تا حد امکان ساده‌تر کنیم.":
-            "ilvex is a collection of simple, fast, and useful tools designed for students. We aim to make calculations and everyday tasks easier.",
-
-        /* About page */
-        "درباره ilvex": "About ilvex",
-
-        "ilvex یک مجموعه ابزار ساده، کاربردی و سریع است که برای کمک به انجام کارهای روزمره، آموزشی و دانش‌آموزی ساخته شده است.":
-            "ilvex is a collection of simple, fast, and practical tools for everyday activities, learning, and schoolwork.",
-
-        "هدف ما": "Our Mission",
-
-        "هدف ilvex این است که ابزارهای کاربردی را بدون پیچیدگی و به ساده‌ترین شکل در اختیار کاربران قرار دهد.":
-            "Our goal is to provide useful tools in the simplest way possible.",
-
-        "برای دانش‌آموزان": "For Students",
-
-        "بخشی از ابزارهای ilvex برای درس، مدرسه، محاسبات و کارهای روزمره دانش‌آموزان طراحی شده‌اند.":
-            "Some ilvex tools are designed for schoolwork, calculations, and everyday student tasks.",
-
-        "برنامه‌نویس ilvex": "ilvex Developer",
-        "ilvex توسط": "Designed and developed by",
-        "طراحی و توسعه داده شده است.": ".",
-
-        "در حال توسعه": "Under Development",
-
-        "ilvex یک پروژه در حال توسعه است و قرار است در آینده ابزارهای بیشتری به آن اضافه شود.":
-            "ilvex is an ongoing project, and more tools are planned for future updates.",
-
-        "کانال بله": "Bale Channel",
-
-        "برای دنبال کردن اخبار، پروژه‌ها و آخرین فعالیت‌های ilvex می‌توانید به کانال ما در بله بپیوندید.":
-            "Follow ilvex news, projects, and updates by joining our Bale channel.",
-
-        "ورود به کانال": "Join the Channel",
-
-        /* Tool cards */
-        "ابزارهای ilvex": "ilvex Tools",
-        "همه ابزارها": "All Tools",
-        "باز کردن ابزار ←": "Open Tool →",
-        "ابزاری با این نام پیدا نشد.": "No matching tools found.",
-
-        "ابزارهایی کاربردی، سریع و ساده برای انجام کارهای روزمره؛ همه در یک پلتفرم و در دسترس شما.":
-            "Practical, fast, and simple tools for everyday tasks, all in one place.",
-
-        "شمارش متن": "Text Counter",
-
-        "تعداد کلمات، حروف، کاراکترها و خطوط متن خود را محاسبه کنید.":
-            "Count the words, characters, and lines in your text.",
-
-        "ماشین حساب": "Calculator",
-
-        "محاسبات ریاضی روزمره را به‌سادگی انجام دهید.":
-            "Perform everyday mathematical calculations easily.",
-
-        "تبدیل واحد": "Unit Converter",
-        "تبدیل واحد طول": "Length Unit Converter",
-
-        "واحدهای طول را به کیلومتر، متر، سانتی‌متر و میلی‌متر تبدیل کنید.":
-            "Convert lengths between kilometers, meters, centimeters, and millimeters.",
-
-        "محاسبه معدل": "Grade Average",
-
-        "نمره‌های خود را وارد کنید و میانگین آن‌ها را به دست آورید.":
-            "Enter your grades and calculate their average.",
-
-        "تبدیل کسر و اعشار": "Fraction & Decimal Converter",
-
-        "کسرها را به عدد اعشاری و اعداد اعشاری را به کسر تبدیل کنید.":
-            "Convert fractions to decimals and decimals to fractions.",
-
-        "ساخت رمز عبور": "Password Generator",
-
-        "رمز عبور تصادفی با حروف، اعداد و نمادها بسازید.":
-            "Create a random password using letters, numbers, and symbols.",
-
-        "توان و ریشه": "Powers & Roots",
-
-        "توان اعداد و ریشه دوم آن‌ها را محاسبه کنید.":
-            "Calculate powers and square roots.",
-
-        "محاسبه اختلاف تاریخ": "Date Difference",
-
-        "اختلاف دو تاریخ را بر اساس تعداد واقعی روزها محاسبه کنید.":
-            "Calculate the number of days between two dates.",
-
-        "ارز و طلا": "Currency & Gold",
-
-        "تبدیل دلار و تومان و محاسبه ارزش تقریبی طلای ۱۸ عیار.":
-            "Convert dollars and toman and estimate the value of 18K gold.",
-
-        /* Text counter */
-        "متن خود را وارد کنید تا آمار آن نمایش داده شود.":
-            "Enter your text to see its statistics.",
-
-        "متن شما": "Your Text",
-        "متن را اینجا بنویسید...": "Type your text here...",
-
-        "تعداد کلمات:": "Words:",
-        "تعداد حروف و کاراکترها:": "Characters:",
-        "کاراکتر بدون فاصله:": "Characters without spaces:",
-        "تعداد خطوط:": "Lines:",
-
-        /* Calculator */
-        "عبارت ریاضی خود را وارد کنید.":
-            "Enter a mathematical expression.",
-
-        "عبارت ریاضی": "Expression",
-        "محاسبه": "Calculate",
-
-        "عملگرهای پایه پشتیبانی می‌شوند: + ، − ، × ، ÷ و پرانتز.":
-            "Supported operators: +, −, ×, ÷, and parentheses.",
-
-        /* Unit converter */
-        "مقدار و واحد مبدأ و مقصد را انتخاب کنید.":
-            "Enter a value and select the source and target units.",
-
-        "مقدار": "Value",
-        "مقدار را وارد کنید": "Enter a value",
-        "تبدیل از": "Convert from",
-        "تبدیل به": "Convert to",
-
-        "میلی‌متر": "Millimeters",
-        "سانتی‌متر": "Centimeters",
-        "متر": "Meters",
-        "کیلومتر": "Kilometers",
-        "تبدیل واحد طول": "Length Unit Converter",
-
-        /* Grades */
-        "نمره‌ها را با فاصله یا ویرگول از هم جدا کنید.":
-            "Separate grades with spaces or commas.",
-
-        "نمره‌ها از ۰ تا ۲۰": "Grades from 0 to 20",
-
-        "این ابزار میانگین ساده نمره‌ها را محاسبه می‌کند. برای معدل وزنی، ضریب هر درس باید جداگانه وارد شود.":
-            "This tool calculates a simple average. For a weighted average, enter each subject's coefficient separately.",
-
-        /* Fractions */
-        "یک کسر مثل 3/4 یا یک عدد اعشاری وارد کنید.":
-            "Enter a fraction such as 3/4 or a decimal number.",
-
-        "کسر یا عدد": "Fraction or Number",
-        "کسر به اعشار": "Fraction to Decimal",
-        "اعشار به کسر": "Decimal to Fraction",
-
-        /* Password */
-        "طول رمز عبور": "Password Length",
-        "حروف بزرگ انگلیسی": "Uppercase Letters",
-        "حروف کوچک انگلیسی": "Lowercase Letters",
-        "اعداد": "Numbers",
-        "نمادهای خاص": "Special Symbols",
-
-        "رمز ساخته‌شده": "Generated Password",
-        "رمز شما اینجا نمایش داده می‌شود": "Your password will appear here",
-
-        "ساخت رمز جدید": "Generate New Password",
-        "کپی رمز": "Copy Password",
-
-        /* Powers */
-        "برای اعداد صحیح بزرگ نیز می‌توانید از محاسبه توان استفاده کنید.":
-            "You can also calculate powers of large integers.",
-
-        "عدد پایه": "Base Number",
-        "توان": "Exponent",
-        "محاسبه توان": "Calculate Power",
-        "محاسبه ریشه دوم": "Calculate Square Root",
-
-        "محاسبات اعداد صحیح بزرگ ممکن است بسته به اندازه عدد، زمان و حافظه بیشتری نیاز داشته باشند.":
-            "Calculations involving very large integers may require extra time and memory.",
-
-        /* Date */
-        "دو تاریخ را انتخاب کنید تا اختلاف روزها و تفکیک تقویمی محاسبه شود.":
-            "Select two dates to calculate the difference in days.",
-
-        "تاریخ شروع": "Start Date",
-        "تاریخ پایان": "End Date",
-
-        "انتخاب تاریخ در این نسخه با تقویم میلادی مرورگر انجام می‌شود. تاریخ شمسی نیز در نتیجه نمایش داده می‌شود.":
-            "This version uses your browser's Gregorian calendar for date selection.",
-
-        /* Currency */
-        "نرخ‌های دریافت‌شده از منبع آنلاین را بررسی کنید و تبدیل انجام دهید.":
-            "Check the online exchange rates and perform conversions.",
-
-        "قیمت هر دلار به تومان": "Price per US Dollar (Toman)",
-        "در حال دریافت نرخ...": "Loading rate...",
-
-        "تبدیل دلار به تومان": "USD to Toman",
-        "مقدار دلار": "Amount in USD",
-        "تبدیل به تومان": "Convert to Toman",
-
-        "تبدیل تومان به دلار": "Toman to USD",
-        "مبلغ به تومان": "Amount in Toman",
-        "تبدیل به دلار": "Convert to USD",
-
-        "محاسبه ارزش طلای ۱۸ عیار": "Calculate 18K Gold Value",
-        "قیمت هر گرم طلا به تومان": "Price per Gram of Gold (Toman)",
-        "وزن طلا به گرم": "Gold Weight (grams)",
-        "محاسبه ارزش طلا": "Calculate Gold Value",
-
-        "قیمت‌ها تقریبی هستند و ممکن است با بازار تفاوت داشته باشند. اجرت، مالیات و سود فروشنده در محاسبه طلا لحاظ نشده است.":
-            "Prices are estimates and may differ from the market. Making charges, taxes, and seller fees are not included.",
-
-        /* Footer */
-        "ساخته‌شده با 💙 برای ساده‌تر کردن کارهای روزمره":
-            "Made with 💙 to make everyday tasks easier.",
-
-        /* Common tool errors */
-        "لطفاً عبارت ریاضی را وارد کنید.":
-            "Please enter a mathematical expression.",
-
-        "عبارت شامل نویسه‌های غیرمجاز است.":
-            "The expression contains invalid characters.",
-
-        "عبارت ریاضی صحیح نیست.":
-            "The mathematical expression is invalid.",
-
-        "لطفاً یک عدد معتبر وارد کنید.":
-            "Please enter a valid number.",
-
-        "واحدهای انتخاب‌شده معتبر نیستند.":
-            "The selected units are invalid.",
-
-        "لطفاً نمره‌ها را وارد کنید.":
-            "Please enter your grades.",
-
-        "نمره‌ها باید عددی بین صفر تا ۲۰ باشند.":
-            "Grades must be between 0 and 20.",
-
-        "کسر را به شکل ۳/۴ وارد کنید.":
-            "Enter a fraction in the form 3/4.",
-
-        "کسر واردشده معتبر نیست.":
-            "The entered fraction is invalid.",
-
-        "مخرج کسر نمی‌تواند صفر باشد.":
-            "The denominator cannot be zero.",
-
-        "لطفاً یک عدد اعشاری معتبر وارد کنید.":
-            "Please enter a valid decimal number.",
-
-        "یک عدد معتبر با حداکثر ۹ رقم اعشار وارد کنید.":
-            "Enter a valid number with no more than 9 decimal places.",
-
-        "طول رمز باید بین ۱ تا ۲۵۶ باشد.":
-            "Password length must be between 1 and 256.",
-
-        "حداقل یک نوع کاراکتر را انتخاب کنید.":
-            "Select at least one character group.",
-
-        "طول رمز برای گزینه‌های انتخاب‌شده کافی نیست.":
-            "The selected character groups require a longer password.",
-
-        "رمز عبور ساخته شد.":
-            "Password generated successfully.",
-
-        "ابتدا رمز عبور بسازید.":
-            "Generate a password first.",
-
-        "رمز عبور کپی شد.":
-            "Password copied.",
-
-        "کپی خودکار انجام نشد؛ رمز را دستی کپی کنید.":
-            "Automatic copying failed. Please copy it manually.",
-
-        "لطفاً عدد و توان معتبر وارد کنید.":
-            "Please enter a valid base and exponent.",
-
-        "نتیجه قابل محاسبه نیست.":
-            "The result cannot be represented.",
-
-        "لطفاً یک عدد معتبر وارد کنید.":
-            "Please enter a valid number.",
-
-        "ریشه دوم عدد منفی در اعداد حقیقی تعریف نشده است.":
-            "A negative number has no real square root.",
-
-        "هر دو تاریخ را انتخاب کنید.":
-            "Select both dates.",
-
-        "یکی از تاریخ‌ها معتبر نیست.":
-            "One of the dates is invalid.",
-
-        "قیمت دلار هنوز دریافت نشده است.":
-            "The dollar rate has not been received yet.",
-
-        "قیمت طلای ۱۸ عیار هنوز دریافت نشده است.":
-            "The 18K gold price has not been received yet.",
-
-        "مقدار دلار را درست وارد کنید.":
-            "Please enter a valid dollar amount.",
-
-        "مبلغ تومان را درست وارد کنید.":
-            "Please enter a valid Toman amount.",
-
-        "وزن طلا را درست وارد کنید.":
-            "Please enter a valid gold weight.",
-
-        "در حال دریافت قیمت دلار و طلا...":
-            "Loading dollar and gold prices...",
-
-        "دریافت خودکار قیمت ناموفق بود؛ اتصال یا منبع قیمت را بررسی کنید.":
-            "Automatic price retrieval failed. Check your connection or the price source.",
-
-        "قیمت‌ها دریافت شدند":
-            "Market prices received"
-    };
-
-    const extraAttributeTranslations = {
-        "باز کردن منو": "Open menu",
-        "بستن": "Close",
-        "جست‌وجوی ابزارها": "Search tools",
-        "جست‌وجو بین ابزارها...": "Search tools...",
-        "متن را اینجا بنویسید...": "Type your text here...",
-        "در حال دریافت نرخ...": "Loading rate..."
-    };
-
-    // گسترش دیکشنری موجود بدون حذف کدهای فعلی
-    if (typeof ilvex_TRANSLATIONS !== "undefined") {
-        Object.assign(ilvex_TRANSLATIONS, extraTranslations);
-    }
-
-    if (typeof ilvex_ATTRIBUTE_TRANSLATIONS !== "undefined") {
-        Object.assign(
-            ilvex_ATTRIBUTE_TRANSLATIONS,
-            extraAttributeTranslations
-        );
-    }
-
-    function refreshLanguage() {
-        if (
-            typeof window.ilvexSetLanguage === "function" &&
-            typeof window.ilvexGetLanguage === "function"
-        ) {
-            window.ilvexSetLanguage(
-                window.ilvexGetLanguage()
-            );
-        }
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener(
-            "DOMContentLoaded",
-            refreshLanguage,
-            { once: true }
-        );
-    } else {
-        refreshLanguage();
-    }
-})();/* ==========================================
-   ilvex 2.0 — FIX MISSING TRANSLATIONS
-========================================== */
-
-Object.assign(ilvex_TRANSLATIONS, {
-    "ابزارهای": "Tools ",
-    "ابزارهای ساده، سریع و کاربردی برای انجام کارهای روزمره":
-        "Simple, fast, and practical tools for everyday tasks",
-
-    "ابزارهایی کاربردی، سریع و ساده برای انجام کارهای روزمره؛ همه در یک پلتفرم و در دسترس شما.":
-        "Practical, fast, and simple tools for everyday tasks, all in one place.",
-
-    "ابزارهای کاربردی": "Useful tools",
-    "ابزارهای ساده": "Simple tools",
-    "ابزارهای سریع": "Fast tools",
-
-    "همه ابزارها": "All Tools",
-    "ابزار مناسب خودت رو پیدا کن.": "Find the right tools for you.",
-    "بدون پیچیدگی": "Without complications",
-
-    "ابزارهایی برای درس، مدرسه و پروژه‌ها.":
-        "Tools for studying, schoolwork, and projects.",
-
-    "ابزارهای ساده و کاربردی برای کارهای روزمره.":
-        "Simple and practical tools for everyday tasks."
 });
-
-// اجرای مجدد ترجمه با زبان انتخاب‌شده
-if (
-    typeof window.ilvexSetLanguage === "function" &&
-    typeof window.ilvexGetLanguage === "function"
-) {
-    window.ilvexSetLanguage(window.ilvexGetLanguage());
-}
