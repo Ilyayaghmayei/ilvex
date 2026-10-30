@@ -1,5 +1,5 @@
 /* =====================================================
-   ZONIVA 2.0
+   ilvex 2.0
    Main JavaScript
    Tools + Market Prices + Persian/English + Security
 ===================================================== */
@@ -39,8 +39,8 @@ function formatNumber(value, digits = 2) {
     if (!Number.isFinite(value)) return "—";
 
     const language =
-        typeof window.zonivaGetLanguage === "function"
-            ? window.zonivaGetLanguage()
+        typeof window.ilvexGetLanguage === "function"
+            ? window.ilvexGetLanguage()
             : "fa";
 
     return new Intl.NumberFormat(
@@ -239,7 +239,7 @@ function calculate() {
 
         showResult("calcResult", formatNumber(result, 10));
     } catch (error) {
-        const language = window.zonivaGetLanguage?.() || "fa";
+        const language = window.ilvexGetLanguage?.() || "fa";
 
         const messages = {
             empty: {
@@ -366,7 +366,7 @@ function convertUnit() {
 
     if (!from || !to) return;
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     if (!Number.isFinite(value)) {
         return showResult(
@@ -412,7 +412,7 @@ function calculateGrade() {
 
     if (!input) return;
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     const raw = toEnglishDigits(input.value).trim();
 
@@ -468,7 +468,7 @@ function fractionToDecimal() {
 
     if (!input) return;
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     const value = toEnglishDigits(input.value)
         .replace(/\s/g, "");
@@ -517,7 +517,7 @@ function decimalToFraction() {
 
     if (!input) return;
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     const value = toEnglishDigits(input.value)
         .replace(/\s/g, "");
@@ -591,7 +591,7 @@ function generatePassword() {
 
     if (!output) return;
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     if (
         !Number.isInteger(length) ||
@@ -688,13 +688,13 @@ async function copyPassword() {
     if (!input || !input.value) {
         return showResult(
             "passwordMessage",
-            window.zonivaGetLanguage?.() === "en"
+            window.ilvexGetLanguage?.() === "en"
                 ? "Generate a password first."
                 : "ابتدا رمز عبور بسازید."
         );
     }
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     try {
         await navigator.clipboard.writeText(input.value);
@@ -738,7 +738,7 @@ function calculatePower() {
     const base = getNumber("powerNumber");
     const exponent = getNumber("powerExponent");
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     if (
         !Number.isFinite(base) ||
@@ -769,7 +769,7 @@ function calculatePower() {
 function calculateRoot() {
     const value = getNumber("powerNumber");
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     if (!Number.isFinite(value)) {
         return showResult(
@@ -804,7 +804,7 @@ function calculateDateDifference() {
     const endValue =
         document.getElementById("endDate")?.value;
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     if (!startValue || !endValue) {
         return showResult(
@@ -847,12 +847,12 @@ function calculateDateDifference() {
    11. دریافت قیمت دلار و طلای ۱۸ عیار
 ===================================================== */
 
-const ZONIVA_MARKET_URLS = [
+const ilvex_MARKET_URLS = [
     "https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data/popular.json",
     "https://cdn.jsdelivr.net/gh/iran-market/iran-market.github.io@main/data/popular.json"
 ];
 
-let zonivaFetchingPrices = false;
+let ilvexFetchingPrices = false;
 
 async function fetchMarketJSON(url) {
     const controller = new AbortController();
@@ -879,7 +879,7 @@ async function fetchMarketJSON(url) {
 }
 
 async function fetchMarketPrices() {
-    if (zonivaFetchingPrices) return;
+    if (ilvexFetchingPrices) return;
 
     const status = document.getElementById("ratesUpdated");
 
@@ -891,9 +891,9 @@ async function fetchMarketPrices() {
         return;
     }
 
-    zonivaFetchingPrices = true;
+    ilvexFetchingPrices = true;
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     if (status) {
         status.textContent =
@@ -906,7 +906,7 @@ async function fetchMarketPrices() {
         let payload = null;
         let lastError = null;
 
-        for (const url of ZONIVA_MARKET_URLS) {
+        for (const url of ilvex_MARKET_URLS) {
             try {
                 payload = await fetchMarketJSON(url);
                 break;
@@ -993,14 +993,14 @@ async function fetchMarketPrices() {
             calculateGold();
         }
 
-        console.info("Zoniva: Market prices received.", {
+        console.info("ilvex: Market prices received.", {
             dollar,
             gold,
             updated
         });
 
     } catch (error) {
-        console.error("Zoniva market price error:", error);
+        console.error("ilvex market price error:", error);
 
         if (status) {
             status.textContent =
@@ -1010,7 +1010,7 @@ async function fetchMarketPrices() {
         }
 
     } finally {
-        zonivaFetchingPrices = false;
+        ilvexFetchingPrices = false;
     }
 }
 
@@ -1023,7 +1023,7 @@ function convertDollar() {
     const rate = getNumber("dollarRate");
     const amount = getNumber("currencyAmount");
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     if (!Number.isFinite(amount) || amount < 0) {
         return showResult(
@@ -1062,7 +1062,7 @@ function convertToman() {
     const rate = getNumber("dollarRate");
     const amount = getNumber("tomanAmount");
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     if (!Number.isFinite(amount) || amount < 0) {
         return showResult(
@@ -1101,7 +1101,7 @@ function calculateGold() {
     const price = getNumber("goldPrice");
     const weight = getNumber("goldWeight");
 
-    const language = window.zonivaGetLanguage?.() || "fa";
+    const language = window.ilvexGetLanguage?.() || "fa";
 
     if (!Number.isFinite(weight) || weight < 0) {
         return showResult(
@@ -1136,13 +1136,13 @@ function calculateGold() {
    15. ترجمه فارسی و انگلیسی
 ===================================================== */
 
-const ZONIVA_TRANSLATIONS = {
+const ilvex_TRANSLATIONS = {
     "خانه": "Home",
     "ابزارها": "Tools",
     "درباره ما": "About",
     "باز کردن منو": "Open menu",
 
-    "چرا Zoniva؟": "Why Zoniva?",
+    "چرا ilvex؟": "Why ilvex?",
     "سریع": "Fast",
     "کاربردی": "Practical",
     "ساده": "Simple",
@@ -1156,8 +1156,8 @@ const ZONIVA_TRANSLATIONS = {
     "بدون پیچیدگی؛ فقط وارد شو و از ابزار استفاده کن.":
         "No complications. Just open a tool and use it.",
 
-    "Zoniva برای چه کسانی است؟":
-        "Who is Zoniva for?",
+    "ilvex برای چه کسانی است؟":
+        "Who is ilvex for?",
 
     "برای دانش‌آموزان، دانشجویان و هر کسی که به ابزارهای کاربردی نیاز دارد.":
         "For school students, university students, and anyone who needs useful tools.",
@@ -1175,45 +1175,45 @@ const ZONIVA_TRANSLATIONS = {
         "Simple and useful tools for everyday life.",
 
     "آماده‌ای شروع کنی؟": "Ready to get started?",
-    "وارد Zoniva شو و ابزار مناسب خودت رو پیدا کن.":
-        "Explore Zoniva and find the right tools for you.",
+    "وارد ilvex شو و ابزار مناسب خودت رو پیدا کن.":
+        "Explore ilvex and find the right tools for you.",
 
     "ورود به ابزارها": "Explore Tools",
 
-    "Zoniva مجموعه‌ای از ابزارهای ساده، سریع و کاربردی است که برای دانش‌آموزان طراحی شده است. ما تلاش می‌کنیم کارهای وقت‌گیر، مانند محاسبات و کارهای روزمره را تا حد امکان ساده‌تر کنیم.":
-        "Zoniva is a collection of simple, fast, and practical tools designed for students. We aim to make time-consuming tasks, calculations, and everyday activities easier.",
+    "ilvex مجموعه‌ای از ابزارهای ساده، سریع و کاربردی است که برای دانش‌آموزان طراحی شده است. ما تلاش می‌کنیم کارهای وقت‌گیر، مانند محاسبات و کارهای روزمره را تا حد امکان ساده‌تر کنیم.":
+        "ilvex is a collection of simple, fast, and practical tools designed for students. We aim to make time-consuming tasks, calculations, and everyday activities easier.",
 
-    "درباره Zoniva": "About Zoniva",
+    "درباره ilvex": "About ilvex",
 
-    "Zoniva یک مجموعه ابزار ساده، کاربردی و سریع است که برای کمک به انجام کارهای روزمره، آموزشی و دانش‌آموزی ساخته شده است.":
-        "Zoniva is a collection of simple, practical, and fast tools designed to help with everyday activities, learning, and schoolwork.",
+    "ilvex یک مجموعه ابزار ساده، کاربردی و سریع است که برای کمک به انجام کارهای روزمره، آموزشی و دانش‌آموزی ساخته شده است.":
+        "ilvex is a collection of simple, practical, and fast tools designed to help with everyday activities, learning, and schoolwork.",
 
     "هدف ما": "Our Mission",
 
-    "هدف Zoniva این است که ابزارهای کاربردی را بدون پیچیدگی و به ساده‌ترین شکل در اختیار کاربران قرار دهد.":
-        "Zoniva aims to provide useful tools in the simplest way possible, without unnecessary complexity.",
+    "هدف ilvex این است که ابزارهای کاربردی را بدون پیچیدگی و به ساده‌ترین شکل در اختیار کاربران قرار دهد.":
+        "ilvex aims to provide useful tools in the simplest way possible, without unnecessary complexity.",
 
-    "بخشی از ابزارهای Zoniva برای درس، مدرسه، محاسبات و کارهای روزمره دانش‌آموزان طراحی شده‌اند.":
-        "Some Zoniva tools are designed for schoolwork, calculations, and students' everyday tasks.",
+    "بخشی از ابزارهای ilvex برای درس، مدرسه، محاسبات و کارهای روزمره دانش‌آموزان طراحی شده‌اند.":
+        "Some ilvex tools are designed for schoolwork, calculations, and students' everyday tasks.",
 
     "برای دانش‌آموزان": "For Students",
-    "برنامه‌نویس Zoniva": "Zoniva Developer",
-    "Zoniva توسط": "Designed and developed by",
+    "برنامه‌نویس ilvex": "ilvex Developer",
+    "ilvex توسط": "Designed and developed by",
     "طراحی و توسعه داده شده است.": ".",
 
     "در حال توسعه": "Under Development",
 
-    "Zoniva یک پروژه در حال توسعه است و قرار است در آینده ابزارهای بیشتری به آن اضافه شود.":
-        "Zoniva is an ongoing project, and more tools are planned for future updates.",
+    "ilvex یک پروژه در حال توسعه است و قرار است در آینده ابزارهای بیشتری به آن اضافه شود.":
+        "ilvex is an ongoing project, and more tools are planned for future updates.",
 
     "کانال بله": "Bale Channel",
 
-    "برای دنبال کردن اخبار، پروژه‌ها و آخرین فعالیت‌های Zoniva می‌توانید به کانال ما در بله بپیوندید.":
-        "Follow Zoniva news, projects, and updates by joining our channel on Bale.",
+    "برای دنبال کردن اخبار، پروژه‌ها و آخرین فعالیت‌های ilvex می‌توانید به کانال ما در بله بپیوندید.":
+        "Follow ilvex news, projects, and updates by joining our channel on Bale.",
 
     "ورود به کانال": "Join the Channel",
 
-    "ابزارهای Zoniva": "Zoniva Tools",
+    "ابزارهای ilvex": "ilvex Tools",
 
     "ابزارهایی کاربردی، سریع و ساده برای انجام کارهای روزمره؛ همه در یک پلتفرم و در دسترس شما.":
         "Practical, fast, and simple tools for everyday tasks, all in one convenient platform.",
@@ -1365,7 +1365,7 @@ const ZONIVA_TRANSLATIONS = {
     "ساخته‌شده با 💙 برای ساده‌تر کردن کارهای روزمره":
         "Made with 💙 to make everyday tasks easier.",
 
-    "ZONIVA 2.0": "ZONIVA 2.0",
+    "ilvex 2.0": "ilvex 2.0",
 
     "ابزارهایی کاربردی، سریع و ساده برای انجام کارهای روزمره؛ همه در یک پلتفرم و در دسترس شما.":
         "Practical, fast, and simple tools for everyday tasks, all in one convenient platform."
@@ -1376,7 +1376,7 @@ const ZONIVA_TRANSLATIONS = {
    16. ویژگی‌های قابل ترجمه
 ===================================================== */
 
-const ZONIVA_ATTRIBUTE_TRANSLATIONS = {
+const ilvex_ATTRIBUTE_TRANSLATIONS = {
     "باز کردن منو": "Open menu",
     "بستن": "Close",
     "جست‌وجوی ابزارها": "Search tools",
@@ -1392,8 +1392,8 @@ const ZONIVA_ATTRIBUTE_TRANSLATIONS = {
    17. موتور تغییر زبان
 ===================================================== */
 
-(function setupZonivaLanguage() {
-    const STORAGE_KEY = "zoniva-language";
+(function setupilvexLanguage() {
+    const STORAGE_KEY = "ilvex-language";
 
     let currentLanguage = "fa";
 
@@ -1407,7 +1407,7 @@ const ZONIVA_ATTRIBUTE_TRANSLATIONS = {
     function findPersianTranslation(englishText) {
         const wanted = normalize(englishText);
 
-        return Object.entries(ZONIVA_TRANSLATIONS).find(
+        return Object.entries(ilvex_TRANSLATIONS).find(
             ([persian, english]) => normalize(english) === wanted
         )?.[0];
     }
@@ -1419,8 +1419,8 @@ const ZONIVA_ATTRIBUTE_TRANSLATIONS = {
             return original;
         }
 
-        if (Object.hasOwn(ZONIVA_TRANSLATIONS, clean)) {
-            return ZONIVA_TRANSLATIONS[clean];
+        if (Object.hasOwn(ilvex_TRANSLATIONS, clean)) {
+            return ilvex_TRANSLATIONS[clean];
         }
 
         // ترجمه پیام‌های پویا
@@ -1514,7 +1514,7 @@ const ZONIVA_ATTRIBUTE_TRANSLATIONS = {
             if (currentLanguage === "en") {
                 element.setAttribute(
                     name,
-                    ZONIVA_ATTRIBUTE_TRANSLATIONS[original] || original
+                    ilvex_ATTRIBUTE_TRANSLATIONS[original] || original
                 );
             } else {
                 element.setAttribute(name, original);
@@ -1589,7 +1589,7 @@ const ZONIVA_ATTRIBUTE_TRANSLATIONS = {
             localStorage.setItem(STORAGE_KEY, currentLanguage);
         } catch (error) {
             console.warn(
-                "Zoniva: Could not save language preference.",
+                "ilvex: Could not save language preference.",
                 error
             );
         }
@@ -1619,7 +1619,7 @@ const ZONIVA_ATTRIBUTE_TRANSLATIONS = {
 
             if (currentLanguage === "en") {
                 title.textContent =
-                    ZONIVA_TRANSLATIONS[normalize(originalTitle)] ||
+                    ilvex_TRANSLATIONS[normalize(originalTitle)] ||
                     originalTitle;
             } else {
                 title.textContent = originalTitle;
@@ -1649,11 +1649,11 @@ const ZONIVA_ATTRIBUTE_TRANSLATIONS = {
     }
 
     function updateLanguageStyles() {
-        let style = document.getElementById("zoniva-language-styles");
+        let style = document.getElementById("ilvex-language-styles");
 
         if (!style) {
             style = document.createElement("style");
-            style.id = "zoniva-language-styles";
+            style.id = "ilvex-language-styles";
 
             style.textContent = `
                 .language-toggle {
@@ -1727,7 +1727,7 @@ const ZONIVA_ATTRIBUTE_TRANSLATIONS = {
             }
         } catch (error) {
             console.warn(
-                "Zoniva: Could not read language preference.",
+                "ilvex: Could not read language preference.",
                 error
             );
         }
@@ -1788,8 +1788,8 @@ const ZONIVA_ATTRIBUTE_TRANSLATIONS = {
         });
     }
 
-    window.zonivaSetLanguage = applyLanguage;
-    window.zonivaGetLanguage = () => currentLanguage;
+    window.ilvexSetLanguage = applyLanguage;
+    window.ilvexGetLanguage = () => currentLanguage;
 
     if (document.readyState === "loading") {
         document.addEventListener(
@@ -1883,7 +1883,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setInterval(fetchMarketPrices, 30 * 60 * 1000);
     }
 });/* =====================================================
-   ZONIVA 2.0 — EXTENDED TRANSLATIONS PATCH
+   ilvex 2.0 — EXTENDED TRANSLATIONS PATCH
    Additional Persian / English translations
 ===================================================== */
 
@@ -1898,7 +1898,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "باز کردن منو": "Open menu",
 
         /* Homepage */
-        "چرا Zoniva؟": "Why Zoniva?",
+        "چرا ilvex؟": "Why ilvex?",
         "سریع": "Fast",
         "کاربردی": "Practical",
         "ساده": "Simple",
@@ -1912,8 +1912,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "بدون پیچیدگی؛ فقط وارد شو و از ابزار استفاده کن.":
             "No complications. Just open a tool and use it.",
 
-        "Zoniva برای چه کسانی است؟":
-            "Who is Zoniva for?",
+        "ilvex برای چه کسانی است؟":
+            "Who is ilvex for?",
 
         "برای دانش‌آموزان، دانشجویان و هر کسی که به ابزارهای کاربردی نیاز دارد.":
             "For students and anyone who needs useful tools.",
@@ -1933,48 +1933,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
         "آماده‌ای شروع کنی؟": "Ready to get started?",
 
-        "وارد Zoniva شو و ابزار مناسب خودت رو پیدا کن.":
-            "Explore Zoniva and find the right tools for you.",
+        "وارد ilvex شو و ابزار مناسب خودت رو پیدا کن.":
+            "Explore ilvex and find the right tools for you.",
 
         "ورود به ابزارها": "Explore Tools",
 
-        "Zoniva مجموعه‌ای از ابزارهای ساده، سریع و کاربردی است که برای دانش‌آموزان طراحی شده است. ما تلاش می‌کنیم کارهای وقت‌گیر، مانند محاسبات و کارهای روزمره را تا حد امکان ساده‌تر کنیم.":
-            "Zoniva is a collection of simple, fast, and useful tools designed for students. We aim to make calculations and everyday tasks easier.",
+        "ilvex مجموعه‌ای از ابزارهای ساده، سریع و کاربردی است که برای دانش‌آموزان طراحی شده است. ما تلاش می‌کنیم کارهای وقت‌گیر، مانند محاسبات و کارهای روزمره را تا حد امکان ساده‌تر کنیم.":
+            "ilvex is a collection of simple, fast, and useful tools designed for students. We aim to make calculations and everyday tasks easier.",
 
         /* About page */
-        "درباره Zoniva": "About Zoniva",
+        "درباره ilvex": "About ilvex",
 
-        "Zoniva یک مجموعه ابزار ساده، کاربردی و سریع است که برای کمک به انجام کارهای روزمره، آموزشی و دانش‌آموزی ساخته شده است.":
-            "Zoniva is a collection of simple, fast, and practical tools for everyday activities, learning, and schoolwork.",
+        "ilvex یک مجموعه ابزار ساده، کاربردی و سریع است که برای کمک به انجام کارهای روزمره، آموزشی و دانش‌آموزی ساخته شده است.":
+            "ilvex is a collection of simple, fast, and practical tools for everyday activities, learning, and schoolwork.",
 
         "هدف ما": "Our Mission",
 
-        "هدف Zoniva این است که ابزارهای کاربردی را بدون پیچیدگی و به ساده‌ترین شکل در اختیار کاربران قرار دهد.":
+        "هدف ilvex این است که ابزارهای کاربردی را بدون پیچیدگی و به ساده‌ترین شکل در اختیار کاربران قرار دهد.":
             "Our goal is to provide useful tools in the simplest way possible.",
 
         "برای دانش‌آموزان": "For Students",
 
-        "بخشی از ابزارهای Zoniva برای درس، مدرسه، محاسبات و کارهای روزمره دانش‌آموزان طراحی شده‌اند.":
-            "Some Zoniva tools are designed for schoolwork, calculations, and everyday student tasks.",
+        "بخشی از ابزارهای ilvex برای درس، مدرسه، محاسبات و کارهای روزمره دانش‌آموزان طراحی شده‌اند.":
+            "Some ilvex tools are designed for schoolwork, calculations, and everyday student tasks.",
 
-        "برنامه‌نویس Zoniva": "Zoniva Developer",
-        "Zoniva توسط": "Designed and developed by",
+        "برنامه‌نویس ilvex": "ilvex Developer",
+        "ilvex توسط": "Designed and developed by",
         "طراحی و توسعه داده شده است.": ".",
 
         "در حال توسعه": "Under Development",
 
-        "Zoniva یک پروژه در حال توسعه است و قرار است در آینده ابزارهای بیشتری به آن اضافه شود.":
-            "Zoniva is an ongoing project, and more tools are planned for future updates.",
+        "ilvex یک پروژه در حال توسعه است و قرار است در آینده ابزارهای بیشتری به آن اضافه شود.":
+            "ilvex is an ongoing project, and more tools are planned for future updates.",
 
         "کانال بله": "Bale Channel",
 
-        "برای دنبال کردن اخبار، پروژه‌ها و آخرین فعالیت‌های Zoniva می‌توانید به کانال ما در بله بپیوندید.":
-            "Follow Zoniva news, projects, and updates by joining our Bale channel.",
+        "برای دنبال کردن اخبار، پروژه‌ها و آخرین فعالیت‌های ilvex می‌توانید به کانال ما در بله بپیوندید.":
+            "Follow ilvex news, projects, and updates by joining our Bale channel.",
 
         "ورود به کانال": "Join the Channel",
 
         /* Tool cards */
-        "ابزارهای Zoniva": "Zoniva Tools",
+        "ابزارهای ilvex": "ilvex Tools",
         "همه ابزارها": "All Tools",
         "باز کردن ابزار ←": "Open Tool →",
         "ابزاری با این نام پیدا نشد.": "No matching tools found.",
@@ -2255,24 +2255,24 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // گسترش دیکشنری موجود بدون حذف کدهای فعلی
-    if (typeof ZONIVA_TRANSLATIONS !== "undefined") {
-        Object.assign(ZONIVA_TRANSLATIONS, extraTranslations);
+    if (typeof ilvex_TRANSLATIONS !== "undefined") {
+        Object.assign(ilvex_TRANSLATIONS, extraTranslations);
     }
 
-    if (typeof ZONIVA_ATTRIBUTE_TRANSLATIONS !== "undefined") {
+    if (typeof ilvex_ATTRIBUTE_TRANSLATIONS !== "undefined") {
         Object.assign(
-            ZONIVA_ATTRIBUTE_TRANSLATIONS,
+            ilvex_ATTRIBUTE_TRANSLATIONS,
             extraAttributeTranslations
         );
     }
 
     function refreshLanguage() {
         if (
-            typeof window.zonivaSetLanguage === "function" &&
-            typeof window.zonivaGetLanguage === "function"
+            typeof window.ilvexSetLanguage === "function" &&
+            typeof window.ilvexGetLanguage === "function"
         ) {
-            window.zonivaSetLanguage(
-                window.zonivaGetLanguage()
+            window.ilvexSetLanguage(
+                window.ilvexGetLanguage()
             );
         }
     }
@@ -2287,10 +2287,10 @@ document.addEventListener("DOMContentLoaded", () => {
         refreshLanguage();
     }
 })();/* ==========================================
-   ZONIVA 2.0 — FIX MISSING TRANSLATIONS
+   ilvex 2.0 — FIX MISSING TRANSLATIONS
 ========================================== */
 
-Object.assign(ZONIVA_TRANSLATIONS, {
+Object.assign(ilvex_TRANSLATIONS, {
     "ابزارهای": "Tools ",
     "ابزارهای ساده، سریع و کاربردی برای انجام کارهای روزمره":
         "Simple, fast, and practical tools for everyday tasks",
@@ -2315,8 +2315,8 @@ Object.assign(ZONIVA_TRANSLATIONS, {
 
 // اجرای مجدد ترجمه با زبان انتخاب‌شده
 if (
-    typeof window.zonivaSetLanguage === "function" &&
-    typeof window.zonivaGetLanguage === "function"
+    typeof window.ilvexSetLanguage === "function" &&
+    typeof window.ilvexGetLanguage === "function"
 ) {
-    window.zonivaSetLanguage(window.zonivaGetLanguage());
+    window.ilvexSetLanguage(window.ilvexGetLanguage());
 }

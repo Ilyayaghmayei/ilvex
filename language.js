@@ -1,5 +1,5 @@
 /* ==========================================
-   ZONIVA 2.0 — LANGUAGE SYSTEM
+   ilvex 2.0 — LANGUAGE SYSTEM
    Persian / English
    Saves language choice between pages
 ========================================== */
@@ -7,13 +7,13 @@
 (() => {
     "use strict";
 
-    const STORAGE_KEY = "zoniva-language";
+    const STORAGE_KEY = "ilvex-language";
 
     const translations = {
         // Browser titles
-        "Zoniva | زونیوا": "Zoniva | Tools for everyone",
-        "درباره ما | Zoniva": "About Us | Zoniva",
-        "ابزارها | Zoniva 2.0": "Tools | Zoniva 2.0",
+        "ilvex | زونیوا": "ilvex | Tools for everyone",
+        "درباره ما | ilvex": "About Us | ilvex",
+        "ابزارها | ilvex 2.0": "Tools | ilvex 2.0",
 
         // Navigation
         "خانه": "Home",
@@ -22,7 +22,7 @@
         "باز کردن منو": "Open menu",
 
         // Homepage
-        "چرا Zoniva؟": "Why Zoniva?",
+        
         "ابزارهای ساده، سریع و کاربردی برای انجام کارهای روزمره":
             "Simple, fast, and practical tools for everyday tasks",
 
@@ -38,7 +38,7 @@
         "بدون پیچیدگی؛ فقط وارد شو و از ابزار استفاده کن.":
             "No complications. Just open a tool and use it.",
 
-        "Zoniva برای چه کسانی است؟": "Who is Zoniva for?",
+        "ilvex برای چه کسانی است؟": "Who is ilvex for?",
 
         "برای دانش‌آموزان، دانشجویان و هر کسی که به ابزارهای کاربردی نیاز دارد.":
             "For school students, university students, and anyone who needs useful tools.",
@@ -56,50 +56,50 @@
             "Simple and useful tools for everyday life.",
 
         "آماده‌ای شروع کنی؟": "Ready to get started?",
-        "وارد Zoniva شو و ابزار مناسب خودت رو پیدا کن.":
-            "Explore Zoniva and find the right tools for you.",
+        "وارد ilvex شو و ابزار مناسب خودت رو پیدا کن.":
+            "Explore ilvex and find the right tools for you.",
 
         "ورود به ابزارها": "Explore Tools",
 
-        "Zoniva مجموعه‌ای از ابزارهای ساده، سریع و کاربردی است که برای دانش‌آموزان طراحی شده است. ما تلاش می‌کنیم کارهای وقت‌گیر، مانند محاسبات و کارهای روزمره را تا حد امکان ساده‌تر کنیم.":
-            "Zoniva is a collection of simple, fast, and practical tools designed for students. We aim to make time-consuming tasks, calculations, and everyday activities easier.",
+        "ilvex مجموعه‌ای از ابزارهای ساده، سریع و کاربردی است که برای دانش‌آموزان طراحی شده است. ما تلاش می‌کنیم کارهای وقت‌گیر، مانند محاسبات و کارهای روزمره را تا حد امکان ساده‌تر کنیم.":
+            "ilvex is a collection of simple, fast, and practical tools designed for students. We aim to make time-consuming tasks, calculations, and everyday activities easier.",
 
         // About page
-        "درباره Zoniva": "About Zoniva",
+        "درباره ilvex": "About ilvex",
 
-        "Zoniva یک مجموعه ابزار ساده، کاربردی و سریع است که برای کمک به انجام کارهای روزمره، آموزشی و دانش‌آموزی ساخته شده است.":
-            "Zoniva is a collection of simple, practical, and fast tools designed to help with everyday activities, learning, and schoolwork.",
+        "ilvex یک مجموعه ابزار ساده، کاربردی و سریع است که برای کمک به انجام کارهای روزمره، آموزشی و دانش‌آموزی ساخته شده است.":
+            "ilvex is a collection of simple, practical, and fast tools designed to help with everyday activities, learning, and schoolwork.",
 
         "هدف ما": "Our Mission",
 
-        "هدف Zoniva این است که ابزارهای کاربردی را بدون پیچیدگی و به ساده‌ترین شکل در اختیار کاربران قرار دهد.":
-            "Zoniva aims to provide useful tools in the simplest way possible, without unnecessary complexity.",
+        "هدف ilvex این است که ابزارهای کاربردی را بدون پیچیدگی و به ساده‌ترین شکل در اختیار کاربران قرار دهد.":
+            "ilvex aims to provide useful tools in the simplest way possible, without unnecessary complexity.",
 
         "برای دانش‌آموزان": "For Students",
 
-        "بخشی از ابزارهای Zoniva برای درس، مدرسه، محاسبات و کارهای روزمره دانش‌آموزان طراحی شده‌اند.":
-            "Some Zoniva tools are designed for schoolwork, calculations, and students' everyday tasks.",
+        "بخشی از ابزارهای ilvex برای درس، مدرسه، محاسبات و کارهای روزمره دانش‌آموزان طراحی شده‌اند.":
+            "Some ilvex tools are designed for schoolwork, calculations, and students' everyday tasks.",
 
-        "برنامه‌نویس Zoniva": "Zoniva Developer",
+        "برنامه‌نویس ilvex": "ilvex Developer",
 
-        "Zoniva توسط": "Designed and developed by",
+        "ilvex توسط": "Designed and developed by",
 
         "طراحی و توسعه داده شده است.": ".",
 
         "در حال توسعه": "Under Development",
 
-        "Zoniva یک پروژه در حال توسعه است و قرار است در آینده ابزارهای بیشتری به آن اضافه شود.":
-            "Zoniva is an ongoing project, and more tools are planned for future updates.",
+        "ilvex یک پروژه در حال توسعه است و قرار است در آینده ابزارهای بیشتری به آن اضافه شود.":
+            "ilvex is an ongoing project, and more tools are planned for future updates.",
 
         "کانال بله": "Bale Channel",
 
-        "برای دنبال کردن اخبار، پروژه‌ها و آخرین فعالیت‌های Zoniva می‌توانید به کانال ما در بله بپیوندید.":
-            "Follow Zoniva news, projects, and updates by joining our channel on Bale.",
+        "برای دنبال کردن اخبار، پروژه‌ها و آخرین فعالیت‌های ilvex می‌توانید به کانال ما در بله بپیوندید.":
+            "Follow ilvex news, projects, and updates by joining our channel on Bale.",
 
         "ورود به کانال": "Join the Channel",
 
         // Tools page
-        "ابزارهای Zoniva": "Zoniva Tools",
+        "ابزارهای ilvex": "ilvex Tools",
 
         "ابزارهایی کاربردی، سریع و ساده برای انجام کارهای روزمره؛ همه در یک پلتفرم و در دسترس شما.":
             "Practical, fast, and simple tools for everyday tasks, all in one convenient platform.",
@@ -559,7 +559,7 @@
         try {
             localStorage.setItem(STORAGE_KEY, currentLanguage);
         } catch (error) {
-            console.warn("Zoniva: Could not save language preference.", error);
+            console.warn("ilvex: Could not save language preference.", error);
         }
 
         translatePage();
@@ -575,7 +575,7 @@
                 savedLanguage = saved;
             }
         } catch (error) {
-            console.warn("Zoniva: Could not read language preference.", error);
+            console.warn("ilvex: Could not read language preference.", error);
         }
 
         currentLanguage = savedLanguage;
@@ -640,6 +640,6 @@
     }
 
     // Accessible public methods for later integrations.
-    window.zonivaSetLanguage = setLanguage;
-    window.zonivaGetLanguage = () => currentLanguage;
+    window.ilvexSetLanguage = setLanguage;
+    window.ilvexGetLanguage = () => currentLanguage;
 })();

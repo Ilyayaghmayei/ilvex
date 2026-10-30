@@ -1,6 +1,6 @@
 (() => {
     const canvas = document.createElement("canvas");
-    canvas.id = "zoniva-starfield";
+    canvas.id = "ilvex-starfield";
 
     Object.assign(canvas.style, {
         position: "fixed",
