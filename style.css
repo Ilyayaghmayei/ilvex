@@ -3449,883 +3449,197 @@ textarea::placeholder {
         pointer-events: none;
     }
 }/* =====================================================
-   ILVEX — MOBILE MENU FINAL FIX
-   فقط منوی موبایل
-   هیچ بخش دیگری از سایت تغییر نمی‌کند
-===================================================== */
+   ILVEX — MOBILE MENU
+   CLEAN / SINGLE SOURCE OF TRUTH
+   ===================================================== */
 
 @media (max-width: 700px) {
 
-    /* دکمه منو */
-    .menu-btn {
+    /* Header keeps its existing visual style */
+    .header {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 100001 !important;
+    }
+
+    /* Mobile menu button */
+    #menuBtn {
         display: flex !important;
         position: relative !important;
-        z-index: 10001 !important;
+        z-index: 100003 !important;
+
+        width: 47px !important;
+        height: 47px !important;
 
         flex-shrink: 0 !important;
         align-items: center !important;
         justify-content: center !important;
 
-        cursor: pointer !important;
-        pointer-events: auto !important;
-    }
-
-
-    /* خود منو */
-    .menu {
-        position: fixed !important;
-
-        top: 50% !important;
-        left: 50% !important;
-
-        width: min(88vw, 370px) !important;
-        max-height: 78dvh !important;
-
+        padding: 0 !important;
         margin: 0 !important;
 
-        display: none !important;
-        flex-direction: column !important;
-
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-
-        padding: 22px 17px !important;
-
-        transform: translate(-50%, -50%) !important;
-
-        opacity: 0 !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-
-        z-index: 10000 !important;
-
-        border-radius: 25px !important;
-
-        box-sizing: border-box !important;
-    }
-
-
-    /* وقتی باز می‌شود */
-    .menu.active {
-        display: flex !important;
-
-        opacity: 1 !important;
-        visibility: visible !important;
-        pointer-events: auto !important;
-
-        transform: translate(-50%, -50%) !important;
-
-        animation:
-            ilvexMobileMenuOpen
-            0.32s
-            cubic-bezier(.2, .8, .2, 1)
-            forwards !important;
-    }
-
-
-    /* لینک‌های داخل منو */
-    .menu a {
-        display: flex !important;
-
-        width: 100% !important;
-        min-height: 49px !important;
-
-        box-sizing: border-box !important;
-
-        align-items: center !important;
-        justify-content: center !important;
-
-        pointer-events: auto !important;
-    }
-
-
-    /* بک‌گراند پشت منو */
-    .menu-overlay {
-        position: fixed !important;
-
-        inset: 0 !important;
-
-        width: 100vw !important;
-        height: 100vh !important;
-
-        display: block !important;
-
-        opacity: 0 !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-
-        z-index: 9998 !important;
-
-        background: rgba(0, 3, 10, 0.68) !important;
-
-        transition:
-            opacity 0.25s ease,
-            visibility 0.25s ease !important;
-    }
-
-
-    /* Overlay وقتی منو باز است */
-    .menu-overlay.active {
-        opacity: 1 !important;
-        visibility: visible !important;
-        pointer-events: auto !important;
-    }
-
-
-    /* خود هدر بالاتر از overlay */
-    .header {
-        position: relative !important;
-        z-index: 10001 !important;
-    }
-
-
-    /* جلوگیری از اسکرول صفحه هنگام باز بودن منو */
-    body.menu-open {
-        overflow: hidden !important;
-    }
-}
-
-
-/* انیمیشن باز شدن منو */
-@keyframes ilvexMobileMenuOpen {
-
-    from {
-        opacity: 0;
-        transform: translate(-50%, -47%) scale(0.94);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-}/* =====================================================
-   ILVEX — FINAL MOBILE MENU
-   ONLY MOBILE MENU — DO NOT CHANGE OTHER SITE STYLES
-===================================================== */
-
-@media screen and (max-width: 700px) {
-
-    /* دکمه ☰ */
-    #menuBtn {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-
-        position: relative !important;
-        z-index: 100001 !important;
-
-        width: 47px !important;
-        height: 47px !important;
-
-        opacity: 1 !important;
-        visibility: visible !important;
-
+        cursor: pointer !important;
         pointer-events: auto !important;
         touch-action: manipulation !important;
-
-        cursor: pointer !important;
-    }
-
-
-    /* منوی اصلی */
-    #menu {
-        position: fixed !important;
-
-        top: 50% !important;
-        left: 50% !important;
-
-        width: min(88vw, 370px) !important;
-        max-height: 78vh !important;
-
-        margin: 0 !important;
-
-        padding: 22px 17px !important;
-
-        box-sizing: border-box !important;
-
-        display: none !important;
-
-        flex-direction: column !important;
-        align-items: stretch !important;
-
-        gap: 9px !important;
-
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-
-        transform: translate(-50%, -50%) !important;
-
-        opacity: 0 !important;
-        visibility: hidden !important;
-
-        pointer-events: none !important;
-
-        z-index: 100000 !important;
-
-        border-radius: 25px !important;
-    }
-
-
-    /* منو باز */
-    #menu.active {
-        display: flex !important;
-
-        opacity: 1 !important;
-        visibility: visible !important;
-
-        pointer-events: auto !important;
-
-        transform: translate(-50%, -50%) !important;
-
-        z-index: 100000 !important;
-
-        animation: ilvexMobileMenuOpenFinal
-            0.25s
-            ease-out
-            forwards !important;
-    }
-
-
-    /* لینک‌ها */
-    #menu a {
-        display: flex !important;
-
-        width: 100% !important;
-        min-height: 49px !important;
-
-        align-items: center !important;
-        justify-content: center !important;
-
-        box-sizing: border-box !important;
-
-        pointer-events: auto !important;
-
-        position: relative !important;
-        z-index: 100001 !important;
-    }
-
-
-    /* لایه پشت منو */
-    #menuOverlay {
-        position: fixed !important;
-
-        inset: 0 !important;
-
-        width: 100vw !important;
-        height: 100vh !important;
-
-        display: block !important;
-
-        opacity: 0 !important;
-        visibility: hidden !important;
-
-        pointer-events: none !important;
-
-        z-index: 99998 !important;
-
-        background: rgba(0, 3, 10, 0.68) !important;
-    }
-
-
-    /* Overlay فعال */
-    #menuOverlay.active {
-        opacity: 1 !important;
-        visibility: visible !important;
-
-        pointer-events: auto !important;
-
-        z-index: 99998 !important;
-    }
-
-
-    /* هدر بالاتر از Overlay */
-    header.header {
-        position: sticky !important;
-        top: 0 !important;
-
-        z-index: 100001 !important;
-    }
-
-
-    /* وقتی منو باز است */
-    body.menu-open {
-        overflow: hidden !important;
-    }
-}
-
-
-/* انیمیشن باز شدن */
-@keyframes ilvexMobileMenuOpenFinal {
-
-    from {
-        opacity: 0;
-        transform: translate(-50%, -47%) scale(0.96);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-}/* =====================================================
-   ILVEX MOBILE MENU — FINAL FIX
-===================================================== */
-
-@media screen and (max-width: 700px) {
-
-    /* دکمه منو */
-    #menuBtn {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-
-        position: relative !important;
-
-        width: 47px !important;
-        height: 47px !important;
-
-        cursor: pointer !important;
-        z-index: 100001 !important;
-
-        pointer-events: auto !important;
-    }
-
-    /* خود منو */
-    #menu {
-        position: fixed !important;
-
-        top: 50% !important;
-        left: 50% !important;
-
-        transform: translate(-50%, -50%) scale(0.96) !important;
-
-        width: min(88vw, 370px) !important;
-        max-height: 78dvh !important;
-
-        display: none !important;
-
-        flex-direction: column !important;
-
-        overflow-y: auto !important;
-
-        z-index: 100000 !important;
-
-        opacity: 0 !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-    }
-
-    /* حالت باز */
-    #menu.active {
-        display: flex !important;
-
-        opacity: 1 !important;
-        visibility: visible !important;
-
-        pointer-events: auto !important;
-
-        transform: translate(-50%, -50%) scale(1) !important;
-    }
-
-    /* لینک‌های منو */
-    #menu.active a {
-        pointer-events: auto !important;
-        cursor: pointer !important;
-    }
-
-    /* پس‌زمینه */
-    #menuOverlay {
-        position: fixed !important;
-
-        inset: 0 !important;
-
-        width: 100vw !important;
-        height: 100vh !important;
-
-        z-index: 99998 !important;
-
-        display: block !important;
-
-        opacity: 0 !important;
-        visibility: hidden !important;
-
-        pointer-events: none !important;
-    }
-
-    #menuOverlay.active {
-        opacity: 1 !important;
-        visibility: visible !important;
-
-        pointer-events: auto !important;
-    }
-
-    /* هدر بالاتر از بقیه */
-    .header {
-        position: relative !important;
-        z-index: 100001 !important;
-    }
-
-    /* جلوگیری از اسکرول پشت منو */
-    body.menu-open {
-        overflow: hidden !important;
-    }
-}/* =========================================================
-   ILVEX — MOBILE MENU CLEAN REBUILD
-   ========================================================= */
-
-@media (max-width: 700px) {
-
-    /* ---------- HEADER ---------- */
-
-    header.header {
-        position: relative !important;
-        z-index: 100001 !important;
-    }
-
-    /* ---------- MENU BUTTON ---------- */
-
-    #menuBtn {
-        display: flex !important;
-
-        position: relative !important;
-        z-index: 100002 !important;
-
-        width: 46px !important;
-        height: 46px !important;
-
-        align-items: center !important;
-        justify-content: center !important;
-
-        cursor: pointer !important;
-        pointer-events: auto !important;
-
-        touch-action: manipulation !important;
-
         -webkit-tap-highlight-color: transparent !important;
-
-        border: 1px solid rgba(0, 200, 255, 0.35) !important;
-        border-radius: 14px !important;
-
-        background: rgba(5, 15, 25, 0.85) !important;
-
-        color: #ffffff !important;
-
-        box-shadow:
-            0 0 15px rgba(0, 180, 255, 0.12),
-            inset 0 0 15px rgba(0, 180, 255, 0.03) !important;
-
-        transition:
-            transform 0.2s ease,
-            border-color 0.2s ease,
-            box-shadow 0.2s ease !important;
-    }
-
-    #menuBtn:active {
-        transform: scale(0.92) !important;
-
-        border-color: rgba(0, 220, 255, 0.8) !important;
-
-        box-shadow:
-            0 0 25px rgba(0, 200, 255, 0.35) !important;
     }
 
     #menuBtn .menu-icon {
-        display: block !important;
-
-        font-size: 24px !important;
-        line-height: 1 !important;
-
         pointer-events: none !important;
-
-        color: #ffffff !important;
+        user-select: none !important;
+        line-height: 1 !important;
     }
 
-
-    /* ---------- MAIN MENU ---------- */
-
+    /* Mobile navigation */
     #menu {
         position: fixed !important;
-
         top: 50% !important;
         left: 50% !important;
 
-        width: min(88vw, 360px) !important;
-        max-height: 80vh !important;
-
-        transform: translate(-50%, -50%) scale(0.92) !important;
+        width: min(88vw, 370px) !important;
+        max-height: min(78dvh, 620px) !important;
 
         display: none !important;
-
         flex-direction: column !important;
         align-items: stretch !important;
+        gap: 9px !important;
 
-        gap: 10px !important;
-
-        padding: 18px !important;
-
+        padding: 22px 17px !important;
         margin: 0 !important;
-
         box-sizing: border-box !important;
+
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain !important;
+
+        transform: translate(-50%, -50%) scale(.96) !important;
 
         opacity: 0 !important;
         visibility: hidden !important;
-
         pointer-events: none !important;
 
-        overflow-y: auto !important;
+        z-index: 100002 !important;
 
-        z-index: 100000 !important;
-
-        border: 1px solid rgba(0, 200, 255, 0.28) !important;
-        border-radius: 22px !important;
+        border: 1px solid rgba(69, 182, 255, 0.35) !important;
+        border-radius: 25px !important;
 
         background:
+            radial-gradient(
+                ellipse at 50% 0%,
+                rgba(22, 131, 255, 0.17),
+                transparent 55%
+            ),
             linear-gradient(
                 145deg,
-                rgba(3, 10, 18, 0.98),
-                rgba(5, 20, 30, 0.96)
+                rgba(11, 23, 39, 0.99),
+                rgba(3, 8, 16, 0.99)
             ) !important;
 
         box-shadow:
-            0 0 45px rgba(0, 170, 255, 0.18),
-            0 20px 80px rgba(0, 0, 0, 0.65),
-            inset 0 0 30px rgba(0, 180, 255, 0.025) !important;
+            0 25px 80px rgba(0, 0, 0, 0.55),
+            0 0 35px rgba(22, 131, 255, 0.12),
+            0 0 0 100vmax rgba(0, 3, 10, 0.72) !important;
+
+        backdrop-filter: blur(24px) !important;
+        -webkit-backdrop-filter: blur(24px) !important;
 
         transition:
-            opacity 0.25s ease,
-            transform 0.25s ease,
-            visibility 0.25s ease !important;
+            opacity .22s ease,
+            transform .22s ease,
+            visibility .22s ease !important;
     }
 
-
-    /* ---------- OPEN MENU ---------- */
-
+    /* Open state */
     #menu.active {
         display: flex !important;
-
         opacity: 1 !important;
         visibility: visible !important;
-
         pointer-events: auto !important;
-
         transform: translate(-50%, -50%) scale(1) !important;
-
-        z-index: 100000 !important;
     }
 
-
-    /* ---------- MENU LINKS ---------- */
-
+    /* Links */
     #menu a {
         display: flex !important;
-
         width: 100% !important;
-        min-height: 52px !important;
-
-        box-sizing: border-box !important;
+        min-height: 49px !important;
 
         align-items: center !important;
         justify-content: center !important;
 
-        padding: 12px 16px !important;
-
+        padding: 14px 16px !important;
         margin: 0 !important;
+        box-sizing: border-box !important;
 
-        border: 1px solid rgba(0, 200, 255, 0.12) !important;
-        border-radius: 14px !important;
-
-        background: rgba(255, 255, 255, 0.025) !important;
-
-        color: #ffffff !important;
-
+        color: #d8eaff !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
         text-decoration: none !important;
 
-        font-family: "Vazirmatn", sans-serif !important;
-        font-size: 15px !important;
-        font-weight: 600 !important;
+        background: rgba(18, 39, 64, 0.58) !important;
+        border: 1px solid rgba(91, 161, 239, 0.13) !important;
+        border-radius: 14px !important;
 
-        transition:
-            background 0.2s ease,
-            border-color 0.2s ease,
-            transform 0.2s ease,
-            box-shadow 0.2s ease !important;
+        pointer-events: auto !important;
+        cursor: pointer !important;
+
+        transform: none !important;
     }
 
     #menu a:hover,
-    #menu a:active {
-        background: rgba(0, 180, 255, 0.09) !important;
-
-        border-color: rgba(0, 210, 255, 0.45) !important;
-
+    #menu a:active,
+    #menu a.active,
+    #menu a[aria-current="page"] {
+        color: #ffffff !important;
+        background:
+            linear-gradient(
+                100deg,
+                rgba(8, 104, 223, 0.62),
+                rgba(22, 139, 255, 0.24)
+            ) !important;
+        border-color: rgba(105, 195, 255, 0.45) !important;
         box-shadow:
-            0 0 20px rgba(0, 190, 255, 0.12) !important;
-
-        transform: translateY(-1px) !important;
+            inset 0 0 15px rgba(22, 131, 255, 0.10),
+            0 0 18px rgba(22, 131, 255, 0.10) !important;
+        transform: none !important;
     }
 
-
-    /* ---------- OVERLAY ---------- */
-
+    /* Full-screen overlay */
     #menuOverlay {
         position: fixed !important;
-
-        top: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        left: 0 !important;
+        inset: 0 !important;
 
         width: 100vw !important;
         height: 100vh !important;
 
         display: block !important;
-
         margin: 0 !important;
         padding: 0 !important;
 
         opacity: 0 !important;
         visibility: hidden !important;
-
         pointer-events: none !important;
 
-        background: rgba(0, 0, 0, 0.62) !important;
+        background: rgba(0, 0, 0, 0.60) !important;
 
         backdrop-filter: blur(4px) !important;
         -webkit-backdrop-filter: blur(4px) !important;
 
-        z-index: 99998 !important;
-
-        transition:
-            opacity 0.25s ease,
-            visibility 0.25s ease !important;
-    }
-
-
-    /* ---------- ACTIVE OVERLAY ---------- */
-
-    #menuOverlay.active {
-        opacity: 1 !important;
-
-        visibility: visible !important;
-
-        pointer-events: auto !important;
-
-        z-index: 99998 !important;
-    }
-
-
-    /* ---------- BODY ---------- */
-
-    body.menu-open {
-        overflow: hidden !important;
-    }
-
-}
-
-
-/* =========================================================
-   DESKTOP — KEEP MENU NORMAL
-   ========================================================= */
-
-@media (min-width: 701px) {
-
-    #menuOverlay {
-        display: none !important;
-        pointer-events: none !important;
-    }
-
-}/* ==========================================================
-   ILVEX MOBILE MENU — CLEAN FINAL SYSTEM
-   ========================================================== */
-
-@media (max-width: 700px) {
-
-    /* HEADER */
-    header.header {
-        position: relative !important;
-        z-index: 100001 !important;
-    }
-
-    /* MENU BUTTON */
-    #menuBtn {
-        display: flex !important;
-
-        position: relative !important;
-        z-index: 100003 !important;
-
-        width: 46px !important;
-        height: 46px !important;
-
-        align-items: center !important;
-        justify-content: center !important;
-
-        margin: 0 !important;
-        padding: 0 !important;
-
-        cursor: pointer !important;
-        pointer-events: auto !important;
-        touch-action: manipulation !important;
-
-        border: 1px solid rgba(0, 200, 255, 0.35) !important;
-        border-radius: 14px !important;
-
-        background: rgba(5, 15, 25, 0.9) !important;
-
-        color: #fff !important;
-
-        -webkit-tap-highlight-color: transparent !important;
-    }
-
-    #menuBtn .menu-icon {
-        display: block !important;
-
-        color: #fff !important;
-
-        font-size: 24px !important;
-        line-height: 1 !important;
-
-        pointer-events: none !important;
-        user-select: none !important;
-    }
-
-
-    /* MENU */
-    #menu {
-        position: fixed !important;
-
-        top: 50% !important;
-        left: 50% !important;
-
-        width: calc(100vw - 40px) !important;
-        max-width: 360px !important;
-
-        max-height: 80vh !important;
-
-        margin: 0 !important;
-
-        padding: 18px !important;
-
-        box-sizing: border-box !important;
-
-        display: none !important;
-
-        flex-direction: column !important;
-
-        gap: 10px !important;
-
-        overflow-y: auto !important;
-
-        transform: translate(-50%, -50%) scale(.92) !important;
-
-        opacity: 0 !important;
-        visibility: hidden !important;
-
-        pointer-events: none !important;
-
-        z-index: 100002 !important;
-
-        border: 1px solid rgba(0, 200, 255, .3) !important;
-        border-radius: 22px !important;
-
-        background: rgba(4, 12, 20, .98) !important;
-
-        box-shadow:
-            0 0 40px rgba(0, 180, 255, .2),
-            0 25px 80px rgba(0, 0, 0, .7) !important;
-
-        transition:
-            opacity .2s ease,
-            transform .2s ease,
-            visibility .2s ease !important;
-    }
-
-
-    /* MENU OPEN */
-    #menu.active {
-        display: flex !important;
-
-        opacity: 1 !important;
-        visibility: visible !important;
-
-        pointer-events: auto !important;
-
-        transform: translate(-50%, -50%) scale(1) !important;
-    }
-
-
-    /* LINKS */
-    #menu a {
-        display: flex !important;
-
-        width: 100% !important;
-        min-height: 50px !important;
-
-        box-sizing: border-box !important;
-
-        align-items: center !important;
-        justify-content: center !important;
-
-        padding: 12px 15px !important;
-        margin: 0 !important;
-
-        border: 1px solid rgba(0, 200, 255, .12) !important;
-        border-radius: 13px !important;
-
-        background: rgba(255, 255, 255, .025) !important;
-
-        color: #fff !important;
-
-        text-decoration: none !important;
-
-        font-family: "Vazirmatn", sans-serif !important;
-        font-size: 15px !important;
-        font-weight: 600 !important;
-
-        pointer-events: auto !important;
-    }
-
-
-    /* OVERLAY */
-    #menuOverlay {
-        position: fixed !important;
-
-        top: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        left: 0 !important;
-
-        width: 100vw !important;
-        height: 100vh !important;
-
-        margin: 0 !important;
-        padding: 0 !important;
-
-        display: block !important;
-
-        opacity: 0 !important;
-        visibility: hidden !important;
-
-        pointer-events: none !important;
-
-        background: rgba(0, 0, 0, .6) !important;
-
         z-index: 100000 !important;
 
         transition:
-            opacity .2s ease,
-            visibility .2s ease !important;
+            opacity .22s ease,
+            visibility .22s ease !important;
     }
 
-
-    /* ACTIVE OVERLAY */
     #menuOverlay.active {
         opacity: 1 !important;
         visibility: visible !important;
-
         pointer-events: auto !important;
     }
 
-
-    /* IMPORTANT:
-       overlay is BEHIND menu and button */
+    /* The overlay must stay behind the menu and button */
+    #menuOverlay.active,
     #menuOverlay {
         z-index: 100000 !important;
     }
@@ -4338,16 +3652,12 @@ textarea::placeholder {
         z-index: 100003 !important;
     }
 
-
-    /* STOP PAGE SCROLL WHEN MENU IS OPEN */
     body.menu-open {
         overflow: hidden !important;
-        touch-action: none !important;
     }
 }
 
-
-/* DESKTOP */
+/* Overlay does not exist on desktop */
 @media (min-width: 701px) {
     #menuOverlay {
         display: none !important;
