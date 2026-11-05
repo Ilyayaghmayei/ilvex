@@ -10,7 +10,7 @@
     <meta name="description"
         content="ilvex Tools - مجموعه‌ای از ابزارهای کاربردی، سریع و رایگان برای همه">
 
-    <title>ابزارها | ilvex </title>
+    <title>ابزارها | ilvex</title>
 
     <link rel="icon" href="logo.png" type="image/png">
 
@@ -30,6 +30,7 @@
             --blue: #1683ff;
             --light-blue: #65c7ff;
             --dark-blue: #0b3f91;
+            --green: #21e6a0;
             --text: #f1f7ff;
             --muted: #91a6c5;
             --border: rgba(71, 155, 255, 0.22);
@@ -67,6 +68,10 @@
             color: inherit;
             text-decoration: none;
         }
+
+        /* =========================================
+           TOOLS PAGE
+        ========================================= */
 
         .tools-page {
             width: min(1150px, 92%);
@@ -135,6 +140,10 @@
             color: #6e84a5;
         }
 
+        /* =========================================
+           SECTION TITLE
+        ========================================= */
+
         .tools-section-title {
             display: flex;
             align-items: center;
@@ -153,6 +162,10 @@
             box-shadow: 0 0 12px var(--blue);
         }
 
+        /* =========================================
+           TOOLS GRID
+        ========================================= */
+
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -169,11 +182,21 @@
             padding: 25px;
             border: 1px solid var(--border);
             border-radius: 20px;
+
             background:
-                linear-gradient(145deg, rgba(18, 42, 78, 0.45), transparent 70%),
+                linear-gradient(
+                    145deg,
+                    rgba(18, 42, 78, 0.45),
+                    transparent 70%
+                ),
                 var(--bg-card);
+
             box-shadow: var(--glow);
-            transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+
+            transition:
+                transform 0.25s,
+                border-color 0.25s,
+                box-shadow 0.25s;
         }
 
         .tool-card::after {
@@ -183,7 +206,14 @@
             right: 0;
             width: 70px;
             height: 2px;
-            background: linear-gradient(90deg, transparent, var(--light-blue));
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--light-blue)
+                );
+
             opacity: 0.8;
         }
 
@@ -196,13 +226,20 @@
         .tool-icon {
             display: grid;
             place-items: center;
+
             width: 52px;
             height: 52px;
+
             border-radius: 15px;
+
             border: 1px solid rgba(101, 199, 255, 0.22);
+
             background: rgba(22, 131, 255, 0.12);
+
             color: var(--light-blue);
+
             font-size: 25px;
+
             margin-bottom: 18px;
         }
 
@@ -213,26 +250,47 @@
 
         .tool-card p {
             flex: 1;
+
             margin: 0 0 20px;
+
             color: var(--muted);
+
             font-size: 13px;
             line-height: 1.9;
         }
+
+        /* =========================================
+           BUTTONS
+        ========================================= */
 
         .tool-open-btn,
         .primary-btn {
             display: inline-flex;
             justify-content: center;
             align-items: center;
+
             gap: 8px;
+
             padding: 11px 18px;
+
             border: 1px solid transparent;
             border-radius: 11px;
-            background: linear-gradient(100deg, var(--dark-blue), var(--blue));
+
+            background:
+                linear-gradient(
+                    100deg,
+                    var(--dark-blue),
+                    var(--blue)
+                );
+
             color: white;
+
             font-size: 13px;
             font-weight: 700;
-            transition: filter 0.2s, transform 0.2s;
+
+            transition:
+                filter 0.2s,
+                transform 0.2s;
         }
 
         .tool-open-btn:hover,
@@ -243,9 +301,12 @@
 
         .secondary-btn {
             padding: 10px 15px;
+
             border: 1px solid var(--border);
             border-radius: 10px;
+
             background: rgba(22, 131, 255, 0.08);
+
             color: var(--light-blue);
         }
 
@@ -255,37 +316,61 @@
 
         .tool-empty {
             display: none;
+
             color: var(--muted);
+
             text-align: center;
+
             padding: 30px;
         }
 
-        /* Modals */
+        /* =========================================
+           MODALS
+        ========================================= */
 
         .modal {
             position: fixed;
             inset: 0;
+
             z-index: 9999;
+
             display: none;
+
             align-items: center;
             justify-content: center;
+
             padding: 18px;
+
             overflow-y: auto;
+
             background: rgba(0, 4, 13, 0.84);
+
             backdrop-filter: blur(8px);
         }
 
         .modal-content {
             position: relative;
+
             width: min(500px, 100%);
+
             max-height: 90vh;
+
             overflow-y: auto;
+
             padding: 28px;
+
             border: 1px solid rgba(101, 199, 255, 0.3);
+
             border-radius: 22px;
+
             background:
-                linear-gradient(145deg, rgba(14, 39, 75, 0.5), transparent 60%),
+                linear-gradient(
+                    145deg,
+                    rgba(14, 39, 75, 0.5),
+                    transparent 60%
+                ),
                 #080f1e;
+
             box-shadow: 0 0 45px rgba(22, 131, 255, 0.13);
         }
 
@@ -296,23 +381,33 @@
 
         .modal-description {
             margin: 0 0 23px;
+
             color: var(--muted);
+
             font-size: 13px;
+
             line-height: 1.9;
         }
 
         .close-btn {
             position: absolute;
+
             left: 17px;
             top: 14px;
+
             display: grid;
             place-items: center;
+
             width: 36px;
             height: 36px;
+
             border: 1px solid var(--border);
             border-radius: 10px;
+
             background: transparent;
+
             color: var(--text);
+
             font-size: 22px;
         }
 
@@ -321,14 +416,21 @@
             color: var(--light-blue);
         }
 
+        /* =========================================
+           FORM FIELDS
+        ========================================= */
+
         .field {
             margin-bottom: 17px;
         }
 
         .field label {
             display: block;
+
             margin-bottom: 8px;
+
             color: #d8e8ff;
+
             font-size: 13px;
         }
 
@@ -337,12 +439,19 @@
         .field textarea,
         .tool-input {
             width: 100%;
+
             min-width: 0;
+
             padding: 12px 14px;
+
             color: var(--text);
+
             background: var(--bg-input);
+
             border: 1px solid var(--border);
+
             border-radius: 11px;
+
             outline: none;
         }
 
@@ -351,7 +460,10 @@
         .field textarea:focus,
         .tool-input:focus {
             border-color: var(--blue);
-            box-shadow: 0 0 0 3px rgba(22, 131, 255, 0.1);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(22, 131, 255, 0.1);
         }
 
         .field input::placeholder,
@@ -371,26 +483,47 @@
 
         .field-row {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
             gap: 12px;
         }
 
         .button-row {
             display: flex;
+
             flex-wrap: wrap;
+
             gap: 10px;
+
             margin-top: 18px;
         }
 
+        /* =========================================
+           RESULT BOX
+        ========================================= */
+
         .result-box {
             margin-top: 18px;
+
             padding: 15px;
-            border: 1px solid rgba(101, 199, 255, 0.2);
+
+            border:
+                1px solid
+                rgba(101, 199, 255, 0.2);
+
             border-radius: 12px;
-            background: rgba(22, 131, 255, 0.07);
+
+            background:
+                rgba(22, 131, 255, 0.07);
+
             color: var(--light-blue);
+
             overflow-wrap: anywhere;
+
             line-height: 2;
+
             font-size: 14px;
         }
 
@@ -402,18 +535,30 @@
             margin-top: 7px;
         }
 
+        /* =========================================
+           CHECK LIST
+        ========================================= */
+
         .check-list {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
             gap: 12px;
+
             margin: 15px 0;
         }
 
         .check-item {
             display: flex;
+
             align-items: center;
+
             gap: 8px;
+
             color: #d7e8ff;
+
             font-size: 13px;
         }
 
@@ -421,27 +566,403 @@
             accent-color: var(--blue);
         }
 
+        /* =========================================
+           FILE LAB
+        ========================================= */
+
+        .file-drop-zone {
+            position: relative;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 220px;
+
+            padding: 30px 20px;
+
+            border: 1px dashed rgba(101, 199, 255, 0.45);
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(22, 131, 255, 0.08),
+                    rgba(33, 230, 160, 0.03)
+                );
+
+            text-align: center;
+
+            transition:
+                border-color 0.25s,
+                background 0.25s,
+                transform 0.25s;
+        }
+
+        .file-drop-zone.dragover {
+            border-color: var(--green);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(22, 131, 255, 0.16),
+                    rgba(33, 230, 160, 0.1)
+                );
+
+            transform: scale(1.01);
+
+            box-shadow:
+                0 0 35px rgba(33, 230, 160, 0.08);
+        }
+
+        .file-drop-icon {
+            display: grid;
+            place-items: center;
+
+            width: 65px;
+            height: 65px;
+
+            margin-bottom: 15px;
+
+            border: 1px solid rgba(101, 199, 255, 0.3);
+            border-radius: 18px;
+
+            background: rgba(22, 131, 255, 0.1);
+
+            color: var(--light-blue);
+
+            font-size: 30px;
+
+            box-shadow:
+                0 0 25px rgba(22, 131, 255, 0.08);
+        }
+
+        .file-drop-zone h3 {
+            margin: 0 0 7px;
+
+            font-size: 16px;
+        }
+
+        .file-drop-zone p {
+            margin: 0 0 18px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+
+            line-height: 1.9;
+        }
+
+        .file-select-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 10px 18px;
+
+            border: 1px solid rgba(101, 199, 255, 0.25);
+            border-radius: 10px;
+
+            background: rgba(22, 131, 255, 0.1);
+
+            color: var(--light-blue);
+
+            font-size: 13px;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        .file-select-btn:hover {
+            background: rgba(22, 131, 255, 0.18);
+        }
+
+        #fileLabInput {
+            display: none;
+        }
+
+        .file-info {
+            display: none;
+
+            margin-top: 18px;
+
+            padding: 15px;
+
+            border: 1px solid rgba(101, 199, 255, 0.2);
+            border-radius: 14px;
+
+            background: rgba(22, 131, 255, 0.05);
+        }
+
+        .file-info.active {
+            display: block;
+        }
+
+        .file-info-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            margin-bottom: 12px;
+        }
+
+        .file-type-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-width: 44px;
+            height: 30px;
+
+            padding: 0 8px;
+
+            border-radius: 8px;
+
+            background: rgba(33, 230, 160, 0.1);
+
+            border: 1px solid rgba(33, 230, 160, 0.2);
+
+            color: var(--green);
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .file-name {
+            min-width: 0;
+
+            color: #eaf4ff;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-meta {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 9px;
+
+            margin-top: 12px;
+        }
+
+        .file-meta-item {
+            padding: 9px 10px;
+
+            border-radius: 9px;
+
+            background: rgba(255, 255, 255, 0.025);
+
+            color: var(--muted);
+
+            font-size: 11px;
+        }
+
+        .file-meta-item strong {
+            display: block;
+
+            margin-top: 3px;
+
+            color: #dcecff;
+
+            font-size: 12px;
+        }
+
+        .file-preview {
+            display: none;
+
+            margin-top: 15px;
+
+            max-width: 100%;
+
+            max-height: 260px;
+
+            margin-left: auto;
+            margin-right: auto;
+
+            border: 1px solid rgba(101, 199, 255, 0.2);
+
+            border-radius: 12px;
+
+            object-fit: contain;
+
+            background: #020711;
+        }
+
+        .file-preview.active {
+            display: block;
+        }
+
+        .file-text-area {
+            display: none;
+
+            width: 100%;
+
+            min-height: 180px;
+
+            margin-top: 15px;
+
+            padding: 14px;
+
+            resize: vertical;
+
+            border: 1px solid rgba(101, 199, 255, 0.2);
+
+            border-radius: 12px;
+
+            outline: none;
+
+            background: #030914;
+
+            color: #dcecff;
+
+            direction: ltr;
+
+            text-align: left;
+
+            line-height: 1.8;
+
+            font-family: Consolas, Monaco, monospace;
+
+            font-size: 12px;
+        }
+
+        .file-text-area.active {
+            display: block;
+        }
+
+        .file-table-wrap {
+            display: none;
+
+            margin-top: 15px;
+
+            max-height: 300px;
+
+            overflow: auto;
+
+            border: 1px solid rgba(101, 199, 255, 0.2);
+
+            border-radius: 12px;
+        }
+
+        .file-table-wrap.active {
+            display: block;
+        }
+
+        .file-table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 450px;
+
+            direction: ltr;
+        }
+
+        .file-table th,
+        .file-table td {
+            padding: 9px 11px;
+
+            border-bottom: 1px solid rgba(101, 199, 255, 0.12);
+
+            border-right: 1px solid rgba(101, 199, 255, 0.08);
+
+            text-align: left;
+
+            font-size: 11px;
+
+            white-space: nowrap;
+        }
+
+        .file-table th {
+            position: sticky;
+            top: 0;
+
+            background: #0b1a31;
+
+            color: var(--light-blue);
+        }
+
+        .file-table td {
+            color: #c8d9ee;
+        }
+
+        .file-actions {
+            display: none;
+
+            flex-wrap: wrap;
+
+            gap: 9px;
+
+            margin-top: 15px;
+        }
+
+        .file-actions.active {
+            display: flex;
+        }
+
+        .file-status {
+            margin-top: 13px;
+
+            color: var(--muted);
+
+            font-size: 11px;
+
+            line-height: 1.9;
+        }
+
+        .file-error {
+            color: #ff8794 !important;
+        }
+
+        /* =========================================
+           NOTES
+        ========================================= */
+
         .small-note {
             margin-top: 12px;
+
             color: var(--muted);
+
             font-size: 12px;
+
             line-height: 1.9;
         }
 
         .rates-updated {
             color: var(--muted);
+
             font-size: 12px;
+
             line-height: 1.9;
+
             overflow-wrap: anywhere;
         }
 
+        /* =========================================
+           FOOTER
+        ========================================= */
+
         .site-footer {
             margin-top: 65px;
+
             padding-top: 25px;
+
             border-top: 1px solid var(--border);
+
             text-align: center;
+
             color: var(--muted);
+
             font-size: 12px;
+
             line-height: 2;
         }
 
@@ -449,13 +970,21 @@
             color: var(--light-blue);
         }
 
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
         @media (max-width: 850px) {
+
             .tools-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
             }
+
         }
 
         @media (max-width: 560px) {
+
             .tools-page {
                 width: 91%;
                 padding-top: 15px;
@@ -487,15 +1016,94 @@
             .tools-section-title {
                 font-size: 18px;
             }
+
+            .check-list {
+                grid-template-columns: 1fr;
+            }
+
+            .file-meta {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
 
+    <!-- =========================================
+         ILVEX MAIN HEADER
+    ========================================= -->
+
+    <header class="header">
+
+        <div class="brand">
+
+            <img
+                src="logo.png"
+                alt="ilvex Logo"
+                class="site-logo">
+
+            <div class="logo">
+                ilvex
+            </div>
+
+        </div>
+
+        <button
+            class="menu-btn"
+            id="menuBtn"
+            type="button"
+            aria-label="باز کردن منو"
+            aria-expanded="false"
+            aria-controls="menu">
+
+            <span
+                class="menu-icon"
+                aria-hidden="true">
+                ☰
+            </span>
+
+        </button>
+
+        <nav
+            class="menu"
+            id="menu"
+            aria-label="منوی اصلی">
+
+            <a href="index.html">
+                خانه
+            </a>
+
+            <a
+                href="tools.html"
+                aria-current="page">
+                ابزارها
+            </a>
+
+            <a href="about.html">
+                درباره ما
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- Mobile Menu Background -->
+
+    <div
+        class="menu-overlay"
+        id="menuOverlay">
+    </div>
+
+
+    <!-- =========================================
+         MAIN
+    ========================================= -->
+
     <main class="tools-page">
 
-        <!-- Header -->
+        <!-- Tools Hero -->
 
         <header class="tools-hero">
 
@@ -513,40 +1121,62 @@
             </p>
 
             <div class="tools-search">
+
                 <input
                     type="search"
                     id="toolSearch"
                     placeholder="جست‌وجو بین ابزارها..."
                     aria-label="جست‌وجوی ابزارها">
+
             </div>
 
         </header>
 
 
-        <!-- Tools -->
+        <!-- =========================================
+             TOOLS
+        ========================================= -->
 
         <section aria-labelledby="toolsTitle">
 
-            <h2 class="tools-section-title" id="toolsTitle">
+            <h2
+                class="tools-section-title"
+                id="toolsTitle">
+
                 همه ابزارها
+
             </h2>
 
-            <div class="tools-grid" id="toolsGrid">
+
+            <div
+                class="tools-grid"
+                id="toolsGrid">
+
 
                 <!-- 1. Text Counter -->
 
-                <article class="tool-card" data-search="متن شمارش کلمه حرف کاراکتر text word character">
+                <article
+                    class="tool-card"
+                    data-search="متن شمارش کلمه حرف کاراکتر text word character">
 
-                    <div class="tool-icon">Aa</div>
+                    <div class="tool-icon">
+                        Aa
+                    </div>
 
-                    <h3>شمارش متن</h3>
+                    <h3>
+                        شمارش متن
+                    </h3>
 
                     <p>
                         تعداد کلمات، حروف، کاراکترها و خطوط متن خود را محاسبه کنید.
                     </p>
 
-                    <button class="tool-open-btn" onclick="openTool('textModal')">
+                    <button
+                        class="tool-open-btn"
+                        onclick="openTool('textModal')">
+
                         باز کردن ابزار ←
+
                     </button>
 
                 </article>
@@ -554,18 +1184,28 @@
 
                 <!-- 2. Calculator -->
 
-                <article class="tool-card" data-search="ماشین حساب محاسبات ریاضی calculator">
+                <article
+                    class="tool-card"
+                    data-search="ماشین حساب محاسبات ریاضی calculator">
 
-                    <div class="tool-icon">∑</div>
+                    <div class="tool-icon">
+                        ∑
+                    </div>
 
-                    <h3>ماشین حساب</h3>
+                    <h3>
+                        ماشین حساب
+                    </h3>
 
                     <p>
                         محاسبات ریاضی روزمره را به‌سادگی انجام دهید.
                     </p>
 
-                    <button class="tool-open-btn" onclick="openTool('calculatorModal')">
+                    <button
+                        class="tool-open-btn"
+                        onclick="openTool('calculatorModal')">
+
                         باز کردن ابزار ←
+
                     </button>
 
                 </article>
@@ -573,18 +1213,28 @@
 
                 <!-- 3. Unit Converter -->
 
-                <article class="tool-card" data-search="تبدیل واحد طول کیلومتر متر سانتی متر میلی متر unit">
+                <article
+                    class="tool-card"
+                    data-search="تبدیل واحد طول کیلومتر متر سانتی متر میلی متر unit">
 
-                    <div class="tool-icon">↔</div>
+                    <div class="tool-icon">
+                        ↔
+                    </div>
 
-                    <h3>تبدیل واحد</h3>
+                    <h3>
+                        تبدیل واحد
+                    </h3>
 
                     <p>
                         واحدهای طول را به کیلومتر، متر، سانتی‌متر و میلی‌متر تبدیل کنید.
                     </p>
 
-                    <button class="tool-open-btn" onclick="openTool('unitModal')">
+                    <button
+                        class="tool-open-btn"
+                        onclick="openTool('unitModal')">
+
                         باز کردن ابزار ←
+
                     </button>
 
                 </article>
@@ -592,18 +1242,28 @@
 
                 <!-- 4. Grade Calculator -->
 
-                <article class="tool-card" data-search="محاسبه معدل نمره مدرسه grade average">
+                <article
+                    class="tool-card"
+                    data-search="محاسبه معدل نمره مدرسه grade average">
 
-                    <div class="tool-icon">▤</div>
+                    <div class="tool-icon">
+                        ▤
+                    </div>
 
-                    <h3>محاسبه معدل</h3>
+                    <h3>
+                        محاسبه معدل
+                    </h3>
 
                     <p>
                         نمره‌های خود را وارد کنید و میانگین آن‌ها را به دست آورید.
                     </p>
 
-                    <button class="tool-open-btn" onclick="openTool('gradeModal')">
+                    <button
+                        class="tool-open-btn"
+                        onclick="openTool('gradeModal')">
+
                         باز کردن ابزار ←
+
                     </button>
 
                 </article>
@@ -611,18 +1271,28 @@
 
                 <!-- 5. Fraction Converter -->
 
-                <article class="tool-card" data-search="کسر اعشار تبدیل fraction decimal">
+                <article
+                    class="tool-card"
+                    data-search="کسر اعشار تبدیل fraction decimal">
 
-                    <div class="tool-icon">¾</div>
+                    <div class="tool-icon">
+                        ¾
+                    </div>
 
-                    <h3>تبدیل کسر و اعشار</h3>
+                    <h3>
+                        تبدیل کسر و اعشار
+                    </h3>
 
                     <p>
                         کسرها را به عدد اعشاری و اعداد اعشاری را به کسر تبدیل کنید.
                     </p>
 
-                    <button class="tool-open-btn" onclick="openTool('fractionModal')">
+                    <button
+                        class="tool-open-btn"
+                        onclick="openTool('fractionModal')">
+
                         باز کردن ابزار ←
+
                     </button>
 
                 </article>
@@ -630,18 +1300,28 @@
 
                 <!-- 6. Password Generator -->
 
-                <article class="tool-card" data-search="رمز عبور پسورد امنیت password generator">
+                <article
+                    class="tool-card"
+                    data-search="رمز عبور پسورد امنیت password generator">
 
-                    <div class="tool-icon">⌘</div>
+                    <div class="tool-icon">
+                        ⌘
+                    </div>
 
-                    <h3>ساخت رمز عبور</h3>
+                    <h3>
+                        ساخت رمز عبور
+                    </h3>
 
                     <p>
                         رمز عبور تصادفی با حروف، اعداد و نمادها بسازید.
                     </p>
 
-                    <button class="tool-open-btn" onclick="openTool('passwordModal')">
+                    <button
+                        class="tool-open-btn"
+                        onclick="openTool('passwordModal')">
+
                         باز کردن ابزار ←
+
                     </button>
 
                 </article>
@@ -649,18 +1329,28 @@
 
                 <!-- 7. Power and Root -->
 
-                <article class="tool-card" data-search="توان ریشه دوم ریاضی power root">
+                <article
+                    class="tool-card"
+                    data-search="توان ریشه دوم ریاضی power root">
 
-                    <div class="tool-icon">x²</div>
+                    <div class="tool-icon">
+                        x²
+                    </div>
 
-                    <h3>توان و ریشه</h3>
+                    <h3>
+                        توان و ریشه
+                    </h3>
 
                     <p>
                         توان اعداد و ریشه دوم آن‌ها را محاسبه کنید.
                     </p>
 
-                    <button class="tool-open-btn" onclick="openTool('powerModal')">
+                    <button
+                        class="tool-open-btn"
+                        onclick="openTool('powerModal')">
+
                         باز کردن ابزار ←
+
                     </button>
 
                 </article>
@@ -668,75 +1358,144 @@
 
                 <!-- 8. Date Difference -->
 
-                <article class="tool-card" data-search="تاریخ اختلاف روز ماه سال شمسی میلادی date difference">
+                <article
+                    class="tool-card"
+                    data-search="تاریخ اختلاف روز ماه سال شمسی میلادی date difference">
 
-                    <div class="tool-icon">◷</div>
+                    <div class="tool-icon">
+                        ◷
+                    </div>
 
-                    <h3>محاسبه اختلاف تاریخ</h3>
+                    <h3>
+                        محاسبه اختلاف تاریخ
+                    </h3>
 
                     <p>
                         اختلاف دو تاریخ را بر اساس تعداد واقعی روزها محاسبه کنید.
                     </p>
 
-                    <button class="tool-open-btn" onclick="openTool('dateModal')">
+                    <button
+                        class="tool-open-btn"
+                        onclick="openTool('dateModal')">
+
                         باز کردن ابزار ←
+
                     </button>
 
                 </article>
 
 
-                <!-- 9. Currency and Gold -->
+                
 
-                <article class="tool-card" data-search="دلار تومان ارز قیمت طلا gold dollar currency">
 
-                    <div class="tool-icon">₮</div>
+                <!-- 10. FILE LAB -->
 
-                    <h3>ارز و طلا</h3>
+                <article
+                    class="tool-card"
+                    data-search="فایل فایل لب file lab file manager متن تصویر json csv pdf استخراج متن عکس">
+
+                    <div class="tool-icon">
+                        ◈
+                    </div>
+
+                    <h3>
+                        File Lab
+                    </h3>
 
                     <p>
-                        تبدیل دلار و تومان و محاسبه ارزش تقریبی طلای ۱۸ عیار.
+                        فایل‌های خود را بررسی کنید؛ متن، تصویر، JSON و CSV را بخوانید
+                        و اطلاعات مهم آن‌ها را سریع استخراج کنید.
                     </p>
 
-                    <button class="tool-open-btn" onclick="openTool('currencyModal')">
+                    <button
+                        class="tool-open-btn"
+                        onclick="openTool('fileLabModal')">
+
                         باز کردن ابزار ←
+
                     </button>
 
                 </article>
+
 
             </div>
 
-            <p class="tool-empty" id="toolEmpty">
+
+            <p
+                class="tool-empty"
+                id="toolEmpty">
+
                 ابزاری با این نام پیدا نشد.
+
             </p>
 
         </section>
 
 
-        <!-- Text Counter Modal -->
+        <!-- =========================================
+             TEXT COUNTER MODAL
+        ========================================= -->
 
-        <div class="modal" id="textModal" role="dialog" aria-modal="true" aria-labelledby="textTitle">
+        <div
+            class="modal"
+            id="textModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="textTitle">
 
             <div class="modal-content">
 
-                <button class="close-btn" onclick="closeTool('textModal')" aria-label="بستن">×</button>
+                <button
+                    class="close-btn"
+                    onclick="closeTool('textModal')"
+                    aria-label="بستن">
 
-                <h2 id="textTitle">شمارش متن</h2>
+                    ×
+
+                </button>
+
+                <h2 id="textTitle">
+                    شمارش متن
+                </h2>
 
                 <p class="modal-description">
                     متن خود را وارد کنید تا آمار آن نمایش داده شود.
                 </p>
 
                 <div class="field">
-                    <label for="textInput">متن شما</label>
 
-                    <textarea id="textInput" placeholder="متن را اینجا بنویسید..."></textarea>
+                    <label for="textInput">
+                        متن شما
+                    </label>
+
+                    <textarea
+                        id="textInput"
+                        placeholder="متن را اینجا بنویسید..."></textarea>
+
                 </div>
 
                 <div class="result-box">
-                    <div>تعداد کلمات: <strong id="wordCount">۰</strong></div>
-                    <div>تعداد حروف و کاراکترها: <strong id="charCount">۰</strong></div>
-                    <div>کاراکتر بدون فاصله: <strong id="charNoSpaceCount">۰</strong></div>
-                    <div>تعداد خطوط: <strong id="lineCount">۰</strong></div>
+
+                    <div>
+                        تعداد کلمات:
+                        <strong id="wordCount">۰</strong>
+                    </div>
+
+                    <div>
+                        تعداد حروف و کاراکترها:
+                        <strong id="charCount">۰</strong>
+                    </div>
+
+                    <div>
+                        کاراکتر بدون فاصله:
+                        <strong id="charNoSpaceCount">۰</strong>
+                    </div>
+
+                    <div>
+                        تعداد خطوط:
+                        <strong id="lineCount">۰</strong>
+                    </div>
+
                 </div>
 
             </div>
@@ -744,38 +1503,67 @@
         </div>
 
 
-        <!-- Calculator Modal -->
+        <!-- =========================================
+             CALCULATOR MODAL
+        ========================================= -->
 
-        <div class="modal" id="calculatorModal" role="dialog" aria-modal="true" aria-labelledby="calculatorTitle">
+        <div
+            class="modal"
+            id="calculatorModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="calculatorTitle">
 
             <div class="modal-content">
 
-                <button class="close-btn" onclick="closeTool('calculatorModal')" aria-label="بستن">×</button>
+                <button
+                    class="close-btn"
+                    onclick="closeTool('calculatorModal')"
+                    aria-label="بستن">
 
-                <h2 id="calculatorTitle">ماشین حساب</h2>
+                    ×
+
+                </button>
+
+                <h2 id="calculatorTitle">
+                    ماشین حساب
+                </h2>
 
                 <p class="modal-description">
                     عبارت ریاضی خود را وارد کنید.
                 </p>
 
                 <div class="field">
-                    <label for="calcInput">عبارت ریاضی</label>
+
+                    <label for="calcInput">
+                        عبارت ریاضی
+                    </label>
 
                     <input
                         type="text"
                         id="calcInput"
                         class="tool-input"
                         placeholder="مثال: (12 + 8) * 2">
+
                 </div>
 
-                <button class="primary-btn" onclick="calculate()">
+                <button
+                    class="primary-btn"
+                    onclick="calculate()">
+
                     محاسبه
+
                 </button>
 
-                <div class="result-box" id="calcResult" aria-live="polite"></div>
+                <div
+                    class="result-box"
+                    id="calcResult"
+                    aria-live="polite">
+                </div>
 
                 <p class="small-note">
-                    عملگرهای پایه پشتیبانی می‌شوند: + ، − ، × ، ÷ و پرانتز.
+                    عملگرهای پایه پشتیبانی می‌شوند:
+                    + ، − ، × ، ÷ و پرانتز.
                 </p>
 
             </div>
@@ -783,94 +1571,185 @@
         </div>
 
 
-        <!-- Unit Converter Modal -->
+        <!-- =========================================
+             UNIT CONVERTER MODAL
+        ========================================= -->
 
-        <div class="modal" id="unitModal" role="dialog" aria-modal="true" aria-labelledby="unitTitle">
+        <div
+            class="modal"
+            id="unitModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="unitTitle">
 
             <div class="modal-content">
 
-                <button class="close-btn" onclick="closeTool('unitModal')" aria-label="بستن">×</button>
+                <button
+                    class="close-btn"
+                    onclick="closeTool('unitModal')"
+                    aria-label="بستن">
 
-                <h2 id="unitTitle">تبدیل واحد طول</h2>
+                    ×
+
+                </button>
+
+                <h2 id="unitTitle">
+                    تبدیل واحد طول
+                </h2>
 
                 <p class="modal-description">
                     مقدار و واحد مبدأ و مقصد را انتخاب کنید.
                 </p>
 
                 <div class="field">
-                    <label for="unitInput">مقدار</label>
+
+                    <label for="unitInput">
+                        مقدار
+                    </label>
 
                     <input
                         type="number"
                         id="unitInput"
                         class="tool-input"
                         placeholder="مقدار را وارد کنید">
+
                 </div>
 
                 <div class="field-row">
 
                     <div class="field">
-                        <label for="unitFrom">تبدیل از</label>
+
+                        <label for="unitFrom">
+                            تبدیل از
+                        </label>
 
                         <select id="unitFrom">
-                            <option value="mm">میلی‌متر</option>
-                            <option value="cm">سانتی‌متر</option>
-                            <option value="m" selected>متر</option>
-                            <option value="km">کیلومتر</option>
+
+                            <option value="mm">
+                                میلی‌متر
+                            </option>
+
+                            <option value="cm">
+                                سانتی‌متر
+                            </option>
+
+                            <option value="m" selected>
+                                متر
+                            </option>
+
+                            <option value="km">
+                                کیلومتر
+                            </option>
+
                         </select>
+
                     </div>
 
+
                     <div class="field">
-                        <label for="unitTo">تبدیل به</label>
+
+                        <label for="unitTo">
+                            تبدیل به
+                        </label>
 
                         <select id="unitTo">
-                            <option value="mm">میلی‌متر</option>
-                            <option value="cm">سانتی‌متر</option>
-                            <option value="m">متر</option>
-                            <option value="km" selected>کیلومتر</option>
+
+                            <option value="mm">
+                                میلی‌متر
+                            </option>
+
+                            <option value="cm">
+                                سانتی‌متر
+                            </option>
+
+                            <option value="m">
+                                متر
+                            </option>
+
+                            <option value="km" selected>
+                                کیلومتر
+                            </option>
+
                         </select>
+
                     </div>
 
                 </div>
 
-                <button class="primary-btn" onclick="convertUnit()">
+                <button
+                    class="primary-btn"
+                    onclick="convertUnit()">
+
                     تبدیل واحد
+
                 </button>
 
-                <div class="result-box" id="unitResult" aria-live="polite"></div>
+                <div
+                    class="result-box"
+                    id="unitResult"
+                    aria-live="polite">
+                </div>
 
             </div>
 
         </div>
 
 
-        <!-- Grade Calculator Modal -->
+        <!-- =========================================
+             GRADE CALCULATOR MODAL
+        ========================================= -->
 
-        <div class="modal" id="gradeModal" role="dialog" aria-modal="true" aria-labelledby="gradeTitle">
+        <div
+            class="modal"
+            id="gradeModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="gradeTitle">
 
             <div class="modal-content">
 
-                <button class="close-btn" onclick="closeTool('gradeModal')" aria-label="بستن">×</button>
+                <button
+                    class="close-btn"
+                    onclick="closeTool('gradeModal')"
+                    aria-label="بستن">
 
-                <h2 id="gradeTitle">محاسبه معدل</h2>
+                    ×
+
+                </button>
+
+                <h2 id="gradeTitle">
+                    محاسبه معدل
+                </h2>
 
                 <p class="modal-description">
                     نمره‌ها را با فاصله یا ویرگول از هم جدا کنید.
                 </p>
 
                 <div class="field">
-                    <label for="gradeInput">نمره‌ها از ۰ تا ۲۰</label>
+
+                    <label for="gradeInput">
+                        نمره‌ها از ۰ تا ۲۰
+                    </label>
 
                     <textarea
                         id="gradeInput"
                         placeholder="مثال: 18, 19, 16.5, 20"></textarea>
+
                 </div>
 
-                <button class="primary-btn" onclick="calculateGrade()">
+                <button
+                    class="primary-btn"
+                    onclick="calculateGrade()">
+
                     محاسبه معدل
+
                 </button>
 
-                <div class="result-box" id="gradeResult" aria-live="polite"></div>
+                <div
+                    class="result-box"
+                    id="gradeResult"
+                    aria-live="polite">
+                </div>
 
                 <p class="small-note">
                     این ابزار میانگین ساده نمره‌ها را محاسبه می‌کند.
@@ -882,65 +1761,116 @@
         </div>
 
 
-        <!-- Fraction Converter Modal -->
+        <!-- =========================================
+             FRACTION MODAL
+        ========================================= -->
 
-        <div class="modal" id="fractionModal" role="dialog" aria-modal="true" aria-labelledby="fractionTitle">
+        <div
+            class="modal"
+            id="fractionModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="fractionTitle">
 
             <div class="modal-content">
 
-                <button class="close-btn" onclick="closeTool('fractionModal')" aria-label="بستن">×</button>
+                <button
+                    class="close-btn"
+                    onclick="closeTool('fractionModal')"
+                    aria-label="بستن">
 
-                <h2 id="fractionTitle">تبدیل کسر و اعشار</h2>
+                    ×
+
+                </button>
+
+                <h2 id="fractionTitle">
+                    تبدیل کسر و اعشار
+                </h2>
 
                 <p class="modal-description">
                     یک کسر مثل 3/4 یا یک عدد اعشاری وارد کنید.
                 </p>
 
                 <div class="field">
-                    <label for="fractionInput">کسر یا عدد</label>
+
+                    <label for="fractionInput">
+                        کسر یا عدد
+                    </label>
 
                     <input
                         type="text"
                         id="fractionInput"
                         class="tool-input"
                         placeholder="مثال: 3/4 یا 0.75">
+
                 </div>
 
                 <div class="button-row">
 
-                    <button class="primary-btn" onclick="fractionToDecimal()">
+                    <button
+                        class="primary-btn"
+                        onclick="fractionToDecimal()">
+
                         کسر به اعشار
+
                     </button>
 
-                    <button class="secondary-btn" onclick="decimalToFraction()">
+                    <button
+                        class="secondary-btn"
+                        onclick="decimalToFraction()">
+
                         اعشار به کسر
+
                     </button>
 
                 </div>
 
-                <div class="result-box" id="fractionResult" aria-live="polite"></div>
+                <div
+                    class="result-box"
+                    id="fractionResult"
+                    aria-live="polite">
+                </div>
 
             </div>
 
         </div>
 
 
-        <!-- Password Generator Modal -->
+        <!-- =========================================
+             PASSWORD MODAL
+        ========================================= -->
 
-        <div class="modal" id="passwordModal" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
+        <div
+            class="modal"
+            id="passwordModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="passwordTitle">
 
             <div class="modal-content">
 
-                <button class="close-btn" onclick="closeTool('passwordModal')" aria-label="بستن">×</button>
+                <button
+                    class="close-btn"
+                    onclick="closeTool('passwordModal')"
+                    aria-label="بستن">
 
-                <h2 id="passwordTitle">ساخت رمز عبور</h2>
+                    ×
+
+                </button>
+
+                <h2 id="passwordTitle">
+                    ساخت رمز عبور
+                </h2>
 
                 <p class="modal-description">
                     رمز تصادفی متناسب با نیاز خود بسازید.
                 </p>
 
                 <div class="field">
-                    <label for="passwordLength">طول رمز عبور</label>
+
+                    <label for="passwordLength">
+                        طول رمز عبور
+                    </label>
 
                     <input
                         type="number"
@@ -948,34 +1878,62 @@
                         min="1"
                         max="256"
                         value="16">
+
                 </div>
 
                 <div class="check-list">
 
                     <label class="check-item">
-                        <input type="checkbox" id="passwordUpper" checked>
+
+                        <input
+                            type="checkbox"
+                            id="passwordUpper"
+                            checked>
+
                         حروف بزرگ انگلیسی
+
                     </label>
 
                     <label class="check-item">
-                        <input type="checkbox" id="passwordLower" checked>
+
+                        <input
+                            type="checkbox"
+                            id="passwordLower"
+                            checked>
+
                         حروف کوچک انگلیسی
+
                     </label>
 
                     <label class="check-item">
-                        <input type="checkbox" id="passwordNumbers" checked>
+
+                        <input
+                            type="checkbox"
+                            id="passwordNumbers"
+                            checked>
+
                         اعداد
+
                     </label>
 
                     <label class="check-item">
-                        <input type="checkbox" id="passwordSymbols" checked>
+
+                        <input
+                            type="checkbox"
+                            id="passwordSymbols"
+                            checked>
+
                         نمادهای خاص
+
                     </label>
 
                 </div>
 
                 <div class="field">
-                    <label for="passwordResult">رمز ساخته‌شده</label>
+
+                    <label for="passwordResult">
+                        رمز ساخته‌شده
+                    </label>
 
                     <input
                         type="text"
@@ -983,43 +1941,75 @@
                         class="tool-input"
                         readonly
                         placeholder="رمز شما اینجا نمایش داده می‌شود">
+
                 </div>
 
                 <div class="button-row">
 
-                    <button class="primary-btn" onclick="generatePassword()">
+                    <button
+                        class="primary-btn"
+                        onclick="generatePassword()">
+
                         ساخت رمز جدید
+
                     </button>
 
-                    <button class="secondary-btn" onclick="copyPassword()">
+                    <button
+                        class="secondary-btn"
+                        onclick="copyPassword()">
+
                         کپی رمز
+
                     </button>
 
                 </div>
 
-                <div class="result-box" id="passwordMessage" aria-live="polite"></div>
+                <div
+                    class="result-box"
+                    id="passwordMessage"
+                    aria-live="polite">
+                </div>
 
             </div>
 
         </div>
 
 
-        <!-- Power and Root Modal -->
+        <!-- =========================================
+             POWER / ROOT MODAL
+        ========================================= -->
 
-        <div class="modal" id="powerModal" role="dialog" aria-modal="true" aria-labelledby="powerTitle">
+        <div
+            class="modal"
+            id="powerModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="powerTitle">
 
             <div class="modal-content">
 
-                <button class="close-btn" onclick="closeTool('powerModal')" aria-label="بستن">×</button>
+                <button
+                    class="close-btn"
+                    onclick="closeTool('powerModal')"
+                    aria-label="بستن">
 
-                <h2 id="powerTitle">توان و ریشه</h2>
+                    ×
+
+                </button>
+
+                <h2 id="powerTitle">
+                    توان و ریشه
+                </h2>
 
                 <p class="modal-description">
                     برای اعداد صحیح بزرگ نیز می‌توانید از محاسبه توان استفاده کنید.
                 </p>
 
                 <div class="field">
-                    <label for="powerNumber">عدد پایه</label>
+
+                    <label for="powerNumber">
+                        عدد پایه
+                    </label>
 
                     <input
                         type="text"
@@ -1027,10 +2017,14 @@
                         class="tool-input"
                         inputmode="decimal"
                         placeholder="مثال: 12">
+
                 </div>
 
                 <div class="field">
-                    <label for="powerExponent">توان</label>
+
+                    <label for="powerExponent">
+                        توان
+                    </label>
 
                     <input
                         type="text"
@@ -1038,21 +2032,34 @@
                         class="tool-input"
                         inputmode="numeric"
                         placeholder="مثال: 5">
+
                 </div>
 
                 <div class="button-row">
 
-                    <button class="primary-btn" onclick="calculatePower()">
+                    <button
+                        class="primary-btn"
+                        onclick="calculatePower()">
+
                         محاسبه توان
+
                     </button>
 
-                    <button class="secondary-btn" onclick="calculateRoot()">
+                    <button
+                        class="secondary-btn"
+                        onclick="calculateRoot()">
+
                         محاسبه ریشه دوم
+
                     </button>
 
                 </div>
 
-                <div class="result-box" id="powerResult" aria-live="polite"></div>
+                <div
+                    class="result-box"
+                    id="powerResult"
+                    aria-live="polite">
+                </div>
 
                 <p class="small-note">
                     محاسبات اعداد صحیح بزرگ ممکن است بسته به اندازه عدد،
@@ -1064,37 +2071,73 @@
         </div>
 
 
-        <!-- Date Difference Modal -->
+        <!-- =========================================
+             DATE DIFFERENCE MODAL
+        ========================================= -->
 
-        <div class="modal" id="dateModal" role="dialog" aria-modal="true" aria-labelledby="dateTitle">
+        <div
+            class="modal"
+            id="dateModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dateTitle">
 
             <div class="modal-content">
 
-                <button class="close-btn" onclick="closeTool('dateModal')" aria-label="بستن">×</button>
+                <button
+                    class="close-btn"
+                    onclick="closeTool('dateModal')"
+                    aria-label="بستن">
 
-                <h2 id="dateTitle">محاسبه اختلاف تاریخ</h2>
+                    ×
+
+                </button>
+
+                <h2 id="dateTitle">
+                    محاسبه اختلاف تاریخ
+                </h2>
 
                 <p class="modal-description">
                     دو تاریخ را انتخاب کنید تا اختلاف روزها و تفکیک تقویمی محاسبه شود.
                 </p>
 
                 <div class="field">
-                    <label for="startDate">تاریخ شروع</label>
 
-                    <input type="date" id="startDate">
+                    <label for="startDate">
+                        تاریخ شروع
+                    </label>
+
+                    <input
+                        type="date"
+                        id="startDate">
+
                 </div>
 
                 <div class="field">
-                    <label for="endDate">تاریخ پایان</label>
 
-                    <input type="date" id="endDate">
+                    <label for="endDate">
+                        تاریخ پایان
+                    </label>
+
+                    <input
+                        type="date"
+                        id="endDate">
+
                 </div>
 
-                <button class="primary-btn" onclick="calculateDateDifference()">
+                <button
+                    class="primary-btn"
+                    onclick="calculateDateDifference()">
+
                     محاسبه اختلاف تاریخ
+
                 </button>
 
-                <div class="result-box" id="dateResult" aria-live="polite"></div>
+                <div
+                    class="result-box"
+                    id="dateResult"
+                    aria-live="polite">
+                </div>
 
                 <p class="small-note">
                     انتخاب تاریخ در این نسخه با تقویم میلادی مرورگر انجام می‌شود.
@@ -1106,129 +2149,208 @@
         </div>
 
 
-        <!-- Currency and Gold Modal -->
+        <!-- =========================================
+             FILE LAB MODAL
+        ========================================= -->
 
-        <div class="modal" id="currencyModal" role="dialog" aria-modal="true" aria-labelledby="currencyTitle">
+        <div
+            class="modal"
+            id="fileLabModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="fileLabTitle">
 
             <div class="modal-content">
 
-                <button class="close-btn" onclick="closeTool('currencyModal')" aria-label="بستن">×</button>
+                <button
+                    class="close-btn"
+                    onclick="closeTool('fileLabModal')"
+                    aria-label="بستن">
 
-                <h2 id="currencyTitle">ارز و طلا</h2>
+                    ×
+
+                </button>
+
+
+                <h2 id="fileLabTitle">
+                    File Lab
+                </h2>
 
                 <p class="modal-description">
-                    نرخ‌های دریافت‌شده از منبع آنلاین را بررسی کنید و تبدیل انجام دهید.
+                    فایل را انتخاب یا اینجا رها کنید تا اطلاعات و محتوای قابل‌خواندن آن بررسی شود.
                 </p>
 
-                <div class="field">
-                    <label for="dollarRate">قیمت هر دلار به تومان</label>
+
+                <!-- DROP ZONE -->
+
+                <div
+                    class="file-drop-zone"
+                    id="fileDropZone">
+
+                    <div class="file-drop-icon">
+                        ◈
+                    </div>
+
+                    <h3>
+                        فایل را اینجا رها کن
+                    </h3>
+
+                    <p>
+                        یا از دستگاه خودت یک فایل انتخاب کن
+                    </p>
+
+                    <label
+                        for="fileLabInput"
+                        class="file-select-btn">
+
+                        انتخاب فایل
+
+                    </label>
 
                     <input
-                        type="number"
-                        id="dollarRate"
-                        class="tool-input"
-                        min="0"
-                        placeholder="در حال دریافت نرخ...">
+                        type="file"
+                        id="fileLabInput">
+
                 </div>
 
-                <p class="rates-updated" id="ratesUpdated" aria-live="polite">
-                    در حال دریافت قیمت‌ها...
-                </p>
 
-                <hr style="border:0;border-top:1px solid var(--border);margin:22px 0;">
+                <!-- FILE INFO -->
 
-                <h3 style="font-size:16px;margin-bottom:15px;">
-                    تبدیل دلار به تومان
-                </h3>
+                <div
+                    class="file-info"
+                    id="fileInfo">
 
-                <div class="field">
-                    <label for="currencyAmount">مقدار دلار</label>
+                    <div class="file-info-title">
 
-                    <input
-                        type="number"
-                        id="currencyAmount"
-                        class="tool-input"
-                        min="0"
-                        placeholder="مثال: 100">
+                        <span
+                            class="file-type-badge"
+                            id="fileTypeBadge">
+                            FILE
+                        </span>
+
+                        <div
+                            class="file-name"
+                            id="fileName">
+                        </div>
+
+                    </div>
+
+
+                    <div class="file-meta">
+
+                        <div class="file-meta-item">
+                            نوع فایل
+                            <strong id="fileMime">
+                                —
+                            </strong>
+                        </div>
+
+                        <div class="file-meta-item">
+                            حجم
+                            <strong id="fileSize">
+                                —
+                            </strong>
+                        </div>
+
+                        <div class="file-meta-item">
+                            فرمت
+                            <strong id="fileExtension">
+                                —
+                            </strong>
+                        </div>
+
+                        <div class="file-meta-item">
+                            وضعیت
+                            <strong id="fileStatusShort">
+                                آماده
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <!-- IMAGE PREVIEW -->
+
+                    <img
+                        id="fileImagePreview"
+                        class="file-preview"
+                        alt="پیش‌نمایش تصویر">
+
+
+                    <!-- TEXT / JSON -->
+
+                    <textarea
+                        id="fileTextContent"
+                        class="file-text-area"
+                        readonly
+                        spellcheck="false">
+                    </textarea>
+
+
+                    <!-- CSV TABLE -->
+
+                    <div
+                        class="file-table-wrap"
+                        id="fileTableWrap">
+
+                        <table
+                            class="file-table"
+                            id="fileTable">
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div
+                        class="file-actions"
+                        id="fileActions">
+
+                        <button
+                            class="primary-btn"
+                            id="fileCopyBtn"
+                            onclick="copyFileContent()">
+
+                            کپی محتوا
+
+                        </button>
+
+                        <button
+                            class="secondary-btn"
+                            onclick="formatFileContent()">
+
+                            فرمت کردن
+
+                        </button>
+
+                        <button
+                            class="secondary-btn"
+                            onclick="clearFileLab()">
+
+                            پاک کردن
+
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        class="file-status"
+                        id="fileStatus">
+                    </div>
+
                 </div>
-
-                <button class="primary-btn" onclick="convertDollar()">
-                    تبدیل به تومان
-                </button>
-
-                <div class="result-box" id="dollarResult" aria-live="polite"></div>
-
-
-                <hr style="border:0;border-top:1px solid var(--border);margin:22px 0;">
-
-                <h3 style="font-size:16px;margin-bottom:15px;">
-                    تبدیل تومان به دلار
-                </h3>
-
-                <div class="field">
-                    <label for="tomanAmount">مبلغ به تومان</label>
-
-                    <input
-                        type="number"
-                        id="tomanAmount"
-                        class="tool-input"
-                        min="0"
-                        placeholder="مثال: 1000000">
-                </div>
-
-                <button class="primary-btn" onclick="convertToman()">
-                    تبدیل به دلار
-                </button>
-
-                <div class="result-box" id="tomanResult" aria-live="polite"></div>
-
-
-                <hr style="border:0;border-top:1px solid var(--border);margin:22px 0;">
-
-                <h3 style="font-size:16px;margin-bottom:15px;">
-                    محاسبه ارزش طلای ۱۸ عیار
-                </h3>
-
-                <div class="field">
-                    <label for="goldPrice">قیمت هر گرم طلا به تومان</label>
-
-                    <input
-                        type="number"
-                        id="goldPrice"
-                        class="tool-input"
-                        min="0"
-                        placeholder="در حال دریافت نرخ...">
-                </div>
-
-                <div class="field">
-                    <label for="goldWeight">وزن طلا به گرم</label>
-
-                    <input
-                        type="number"
-                        id="goldWeight"
-                        class="tool-input"
-                        min="0"
-                        step="any"
-                        placeholder="مثال: 2.5">
-                </div>
-
-                <button class="primary-btn" onclick="calculateGold()">
-                    محاسبه ارزش طلا
-                </button>
-
-                <div class="result-box" id="goldResult" aria-live="polite"></div>
-
-                <p class="small-note">
-                    قیمت‌ها تقریبی هستند و ممکن است با بازار تفاوت داشته باشند.
-                    اجرت، مالیات و سود فروشنده در محاسبه طلا لحاظ نشده است.
-                </p>
 
             </div>
 
         </div>
 
 
-        <!-- Footer -->
+        <!-- =========================================
+             FOOTER
+        ========================================= -->
 
         <footer class="site-footer">
 
@@ -1237,7 +2359,8 @@
             </p>
 
             <p>
-                <strong>ilvex</strong> — Tools that make everyday work easier.
+                <strong>ilvex</strong>
+                — Tools that make everyday work easier.
             </p>
 
         </footer>
@@ -1245,44 +2368,1083 @@
     </main>
 
 
-    <!-- Tool Search -->
+    <!-- =========================================
+         TOOL SEARCH
+    ========================================= -->
 
     <script>
-        const toolSearch = document.getElementById("toolSearch");
-        const toolCards = document.querySelectorAll(".tool-card");
-        const toolEmpty = document.getElementById("toolEmpty");
+
+        const toolSearch =
+            document.getElementById("toolSearch");
+
+        const toolCards =
+            document.querySelectorAll(".tool-card");
+
+        const toolEmpty =
+            document.getElementById("toolEmpty");
+
 
         if (toolSearch) {
-            toolSearch.addEventListener("input", function () {
-                const query = this.value.trim().toLowerCase();
-                let visibleCount = 0;
 
-                toolCards.forEach(card => {
-                    const searchableText =
-                        (card.innerText + " " + (card.dataset.search || ""))
-                        .toLowerCase();
+            toolSearch.addEventListener(
+                "input",
+                function () {
 
-                    const visible = searchableText.includes(query);
+                    const query =
+                        this.value
+                            .trim()
+                            .toLowerCase();
 
-                    card.style.display = visible ? "" : "none";
+                    let visibleCount = 0;
 
-                    if (visible) visibleCount++;
-                });
 
-                toolEmpty.style.display =
-                    visibleCount === 0 ? "block" : "none";
-            });
+                    toolCards.forEach(card => {
+
+                        const searchableText =
+                            (
+                                card.innerText +
+                                " " +
+                                (card.dataset.search || "")
+                            ).toLowerCase();
+
+
+                        const visible =
+                            searchableText.includes(query);
+
+
+                        card.style.display =
+                            visible ? "" : "none";
+
+
+                        if (visible) {
+                            visibleCount++;
+                        }
+
+                    });
+
+
+                    toolEmpty.style.display =
+                        visibleCount === 0
+                            ? "block"
+                            : "none";
+
+                }
+            );
+
         }
+
     </script>
 
 
-    <!-- Main Scripts -->
+    <!-- =========================================
+         ILVEX FILE LAB ENGINE
+    ========================================= -->
+
+    <script>
+
+        const fileLabInput =
+            document.getElementById("fileLabInput");
+
+        const fileDropZone =
+            document.getElementById("fileDropZone");
+
+        const fileInfo =
+            document.getElementById("fileInfo");
+
+        const fileName =
+            document.getElementById("fileName");
+
+        const fileMime =
+            document.getElementById("fileMime");
+
+        const fileSize =
+            document.getElementById("fileSize");
+
+        const fileExtension =
+            document.getElementById("fileExtension");
+
+        const fileTypeBadge =
+            document.getElementById("fileTypeBadge");
+
+        const fileStatusShort =
+            document.getElementById("fileStatusShort");
+
+        const fileStatus =
+            document.getElementById("fileStatus");
+
+        const fileImagePreview =
+            document.getElementById("fileImagePreview");
+
+        const fileTextContent =
+            document.getElementById("fileTextContent");
+
+        const fileTableWrap =
+            document.getElementById("fileTableWrap");
+
+        const fileTable =
+            document.getElementById("fileTable");
+
+        const fileActions =
+            document.getElementById("fileActions");
+
+
+        let currentFile = null;
+        let currentTextContent = "";
+
+
+        /* =========================================
+           FORMAT FILE SIZE
+        ========================================= */
+
+        function formatFileSize(bytes) {
+
+            if (bytes === 0) {
+                return "0 بایت";
+            }
+
+            const units = [
+                "بایت",
+                "KB",
+                "MB",
+                "GB"
+            ];
+
+            const index =
+                Math.floor(
+                    Math.log(bytes) / Math.log(1024)
+                );
+
+            const value =
+                bytes /
+                Math.pow(1024, index);
+
+            return `${value.toFixed(value >= 10 || index === 0 ? 0 : 2)} ${units[index]}`;
+
+        }
+
+
+        /* =========================================
+           GET EXTENSION
+        ========================================= */
+
+        function getFileExtension(name) {
+
+            const parts =
+                name.split(".");
+
+            if (parts.length < 2) {
+                return "";
+            }
+
+            return parts
+                .pop()
+                .toLowerCase();
+
+        }
+
+
+        /* =========================================
+           OPEN FILE
+        ========================================= */
+
+        if (fileLabInput) {
+
+            fileLabInput.addEventListener(
+                "change",
+                function () {
+
+                    if (this.files && this.files[0]) {
+
+                        processFile(this.files[0]);
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =========================================
+           DRAG & DROP
+        ========================================= */
+
+        if (fileDropZone) {
+
+            fileDropZone.addEventListener(
+                "dragover",
+                function (event) {
+
+                    event.preventDefault();
+
+                    this.classList.add("dragover");
+
+                }
+            );
+
+
+            fileDropZone.addEventListener(
+                "dragleave",
+                function () {
+
+                    this.classList.remove("dragover");
+
+                }
+            );
+
+
+            fileDropZone.addEventListener(
+                "drop",
+                function (event) {
+
+                    event.preventDefault();
+
+                    this.classList.remove("dragover");
+
+                    const files =
+                        event.dataTransfer.files;
+
+                    if (files && files[0]) {
+
+                        processFile(files[0]);
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =========================================
+           PROCESS FILE
+        ========================================= */
+
+        function processFile(file) {
+
+            currentFile = file;
+
+            currentTextContent = "";
+
+            resetFileOutput();
+
+
+            const extension =
+                getFileExtension(file.name);
+
+            const type =
+                file.type || "نامشخص";
+
+
+            fileInfo.classList.add("active");
+
+            fileName.textContent =
+                file.name;
+
+            fileMime.textContent =
+                type;
+
+            fileSize.textContent =
+                formatFileSize(file.size);
+
+            fileExtension.textContent =
+                extension
+                    ? "." + extension
+                    : "—";
+
+            fileTypeBadge.textContent =
+                extension
+                    ? extension.toUpperCase()
+                    : "FILE";
+
+
+            fileStatusShort.textContent =
+                "در حال بررسی...";
+
+
+            fileStatus.textContent =
+                "در حال خواندن فایل...";
+
+
+            if (isImage(file, extension)) {
+
+                readImage(file);
+
+            }
+
+            else if (
+                isTextFile(file, extension)
+            ) {
+
+                readTextFile(file);
+
+            }
+
+            else if (
+                extension === "json"
+            ) {
+
+                readJsonFile(file);
+
+            }
+
+            else if (
+                extension === "csv"
+            ) {
+
+                readCsvFile(file);
+
+            }
+
+            else if (
+                extension === "pdf" ||
+                type === "application/pdf"
+            ) {
+
+                showPdfInfo(file);
+
+            }
+
+            else {
+
+                showUnsupportedFile(file);
+
+            }
+
+        }
+
+
+        /* =========================================
+           RESET OUTPUT
+        ========================================= */
+
+        function resetFileOutput() {
+
+            fileImagePreview.classList.remove("active");
+
+            fileImagePreview.removeAttribute("src");
+
+            fileTextContent.classList.remove("active");
+
+            fileTextContent.value = "";
+
+            fileTableWrap.classList.remove("active");
+
+            fileTable.innerHTML = "";
+
+            fileActions.classList.remove("active");
+
+            fileStatus.classList.remove("file-error");
+
+        }
+
+
+        /* =========================================
+           IMAGE
+        ========================================= */
+
+        function isImage(file, extension) {
+
+            return (
+                file.type.startsWith("image/") ||
+                [
+                    "jpg",
+                    "jpeg",
+                    "png",
+                    "gif",
+                    "webp",
+                    "bmp",
+                    "svg"
+                ].includes(extension)
+            );
+
+        }
+
+
+        function readImage(file) {
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function (event) {
+
+                    fileImagePreview.src =
+                        event.target.result;
+
+                    fileImagePreview.classList.add("active");
+
+
+                    fileImagePreview.onload =
+                        function () {
+
+                            fileStatusShort.textContent =
+                                "آماده";
+
+                            fileStatus.innerHTML =
+                                `ابعاد تصویر:
+                                <strong>
+                                ${this.naturalWidth} × ${this.naturalHeight}
+                                پیکسل
+                                </strong>`;
+
+                        };
+
+                };
+
+
+            reader.onerror =
+                function () {
+
+                    showFileError(
+                        "خواندن تصویر با خطا مواجه شد."
+                    );
+
+                };
+
+
+            reader.readAsDataURL(file);
+
+        }
+
+
+        /* =========================================
+           TEXT FILE
+        ========================================= */
+
+        function isTextFile(file, extension) {
+
+            return (
+                file.type.startsWith("text/") ||
+                [
+                    "txt",
+                    "md",
+                    "html",
+                    "css",
+                    "js",
+                    "xml",
+                    "log"
+                ].includes(extension)
+            );
+
+        }
+
+
+        function readTextFile(file) {
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function (event) {
+
+                    currentTextContent =
+                        event.target.result;
+
+                    fileTextContent.value =
+                        currentTextContent;
+
+                    fileTextContent.classList.add("active");
+
+                    fileActions.classList.add("active");
+
+                    fileStatusShort.textContent =
+                        "آماده";
+
+                    const characters =
+                        currentTextContent.length;
+
+                    const words =
+                        currentTextContent
+                            .trim()
+                            .split(/\s+/)
+                            .filter(Boolean)
+                            .length;
+
+                    const lines =
+                        currentTextContent
+                            ? currentTextContent.split(/\r?\n/).length
+                            : 0;
+
+
+                    fileStatus.innerHTML =
+                        `متن استخراج شد ·
+                        ${characters.toLocaleString("fa-IR")} کاراکتر ·
+                        ${words.toLocaleString("fa-IR")} کلمه ·
+                        ${lines.toLocaleString("fa-IR")} خط`;
+
+                };
+
+
+            reader.onerror =
+                function () {
+
+                    showFileError(
+                        "خواندن فایل متنی با خطا مواجه شد."
+                    );
+
+                };
+
+
+            reader.readAsText(file, "UTF-8");
+
+        }
+
+
+        /* =========================================
+           JSON
+        ========================================= */
+
+        function readJsonFile(file) {
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function (event) {
+
+                    const raw =
+                        event.target.result;
+
+
+                    try {
+
+                        const json =
+                            JSON.parse(raw);
+
+                        currentTextContent =
+                            JSON.stringify(
+                                json,
+                                null,
+                                4
+                            );
+
+                        fileTextContent.value =
+                            currentTextContent;
+
+                        fileTextContent.classList.add("active");
+
+                        fileActions.classList.add("active");
+
+                        fileStatusShort.textContent =
+                            "JSON معتبر";
+
+                        fileStatus.innerHTML =
+                            `ساختار JSON با موفقیت خوانده شد ·
+                            ${Object.keys(json).length || 0}
+                            مورد اصلی`;
+
+                    }
+
+                    catch (error) {
+
+                        fileTextContent.value =
+                            raw;
+
+                        fileTextContent.classList.add("active");
+
+                        fileActions.classList.add("active");
+
+                        fileStatusShort.textContent =
+                            "JSON نامعتبر";
+
+                        fileStatus.innerHTML =
+                            "این فایل JSON است اما ساختار آن معتبر نیست.";
+
+                        fileStatus.classList.add("file-error");
+
+                    }
+
+                };
+
+
+            reader.onerror =
+                function () {
+
+                    showFileError(
+                        "خواندن فایل JSON با خطا مواجه شد."
+                    );
+
+                };
+
+
+            reader.readAsText(file, "UTF-8");
+
+        }
+
+
+        /* =========================================
+           CSV
+        ========================================= */
+
+        function readCsvFile(file) {
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function (event) {
+
+                    const text =
+                        event.target.result;
+
+
+                    currentTextContent =
+                        text;
+
+                    const rows =
+                        parseCSV(text);
+
+
+                    if (!rows.length) {
+
+                        showFileError(
+                            "اطلاعاتی داخل CSV پیدا نشد."
+                        );
+
+                        return;
+
+                    }
+
+
+                    renderCSVTable(rows);
+
+                    fileActions.classList.add("active");
+
+                    fileStatusShort.textContent =
+                        "CSV آماده";
+
+                    fileStatus.innerHTML =
+                        `${rows.length.toLocaleString("fa-IR")}
+                        ردیف با موفقیت خوانده شد.`;
+
+                };
+
+
+            reader.onerror =
+                function () {
+
+                    showFileError(
+                        "خواندن فایل CSV با خطا مواجه شد."
+                    );
+
+                };
+
+
+            reader.readAsText(file, "UTF-8");
+
+        }
+
+
+        /* =========================================
+           SIMPLE CSV PARSER
+        ========================================= */
+
+        function parseCSV(text) {
+
+            const rows = [];
+
+            let row = [];
+
+            let value = "";
+
+            let insideQuotes = false;
+
+
+            for (
+                let i = 0;
+                i < text.length;
+                i++
+            ) {
+
+                const char =
+                    text[i];
+
+                const next =
+                    text[i + 1];
+
+
+                if (
+                    char === '"' &&
+                    insideQuotes &&
+                    next === '"'
+                ) {
+
+                    value += '"';
+
+                    i++;
+
+                    continue;
+
+                }
+
+
+                if (char === '"') {
+
+                    insideQuotes =
+                        !insideQuotes;
+
+                    continue;
+
+                }
+
+
+                if (
+                    char === "," &&
+                    !insideQuotes
+                ) {
+
+                    row.push(value);
+
+                    value = "";
+
+                    continue;
+
+                }
+
+
+                if (
+                    (char === "\n" || char === "\r") &&
+                    !insideQuotes
+                ) {
+
+                    if (
+                        char === "\r" &&
+                        next === "\n"
+                    ) {
+
+                        i++;
+
+                    }
+
+                    row.push(value);
+
+                    rows.push(row);
+
+                    row = [];
+
+                    value = "";
+
+                    continue;
+
+                }
+
+
+                value += char;
+
+            }
+
+
+            if (
+                value.length ||
+                row.length
+            ) {
+
+                row.push(value);
+
+                rows.push(row);
+
+            }
+
+
+            return rows;
+
+        }
+
+
+        /* =========================================
+           RENDER CSV TABLE
+        ========================================= */
+
+        function renderCSVTable(rows) {
+
+            fileTable.innerHTML = "";
+
+            fileTableWrap.classList.add("active");
+
+
+            const header =
+                document.createElement("tr");
+
+
+            const maxColumns =
+                Math.max(
+                    ...rows.map(row => row.length)
+                );
+
+
+            for (
+                let i = 0;
+                i < maxColumns;
+                i++
+            ) {
+
+                const th =
+                    document.createElement("th");
+
+                th.textContent =
+                    rows[0][i] || `ستون ${i + 1}`;
+
+                header.appendChild(th);
+
+            }
+
+
+            fileTable.appendChild(header);
+
+
+            const bodyRows =
+                rows.slice(1, 101);
+
+
+            bodyRows.forEach(row => {
+
+                const tr =
+                    document.createElement("tr");
+
+
+                for (
+                    let i = 0;
+                    i < maxColumns;
+                    i++
+                ) {
+
+                    const td =
+                        document.createElement("td");
+
+                    td.textContent =
+                        row[i] || "";
+
+                    tr.appendChild(td);
+
+                }
+
+
+                fileTable.appendChild(tr);
+
+            });
+
+
+            if (rows.length > 101) {
+
+                fileStatus.innerHTML +=
+                    `<br>نمایش جدول به ۱۰۰ ردیف اول محدود شده است.`;
+
+            }
+
+        }
+
+
+        /* =========================================
+           PDF
+        ========================================= */
+
+        function showPdfInfo(file) {
+
+            fileStatusShort.textContent =
+                "PDF شناسایی شد";
+
+            fileStatus.innerHTML =
+                `فایل PDF با حجم
+                <strong>
+                ${formatFileSize(file.size)}
+                </strong>
+                شناسایی شد.<br>
+                برای استخراج کامل متن PDF در مرورگر،
+                به موتور PDF جداگانه نیاز است.`;
+
+        }
+
+
+        /* =========================================
+           UNSUPPORTED
+        ========================================= */
+
+        function showUnsupportedFile(file) {
+
+            fileStatusShort.textContent =
+                "فقط اطلاعات فایل";
+
+            fileStatus.innerHTML =
+                `این نوع فایل برای استخراج محتوای مستقیم
+                در File Lab پشتیبانی نمی‌شود،
+                اما اطلاعات پایه آن قابل مشاهده است.`;
+
+        }
+
+
+        /* =========================================
+           ERROR
+        ========================================= */
+
+        function showFileError(message) {
+
+            fileStatusShort.textContent =
+                "خطا";
+
+            fileStatus.textContent =
+                message;
+
+            fileStatus.classList.add("file-error");
+
+        }
+
+
+        /* =========================================
+           COPY CONTENT
+        ========================================= */
+
+        async function copyFileContent() {
+
+            if (!currentTextContent) {
+
+                fileStatus.textContent =
+                    "محتوایی برای کپی وجود ندارد.";
+
+                return;
+
+            }
+
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    currentTextContent
+                );
+
+                fileStatus.textContent =
+                    "محتوا با موفقیت کپی شد ✓";
+
+            }
+
+            catch (error) {
+
+                fileTextContent.select();
+
+                document.execCommand("copy");
+
+                fileStatus.textContent =
+                    "محتوا کپی شد ✓";
+
+            }
+
+        }
+
+
+        /* =========================================
+           FORMAT CONTENT
+        ========================================= */
+
+        function formatFileContent() {
+
+            if (
+                !currentFile ||
+                !currentTextContent
+            ) {
+
+                return;
+
+            }
+
+
+            const extension =
+                getFileExtension(
+                    currentFile.name
+                );
+
+
+            if (extension === "json") {
+
+                try {
+
+                    const parsed =
+                        JSON.parse(
+                            currentTextContent
+                        );
+
+                    currentTextContent =
+                        JSON.stringify(
+                            parsed,
+                            null,
+                            4
+                        );
+
+                    fileTextContent.value =
+                        currentTextContent;
+
+                    fileStatus.textContent =
+                        "JSON با موفقیت فرمت شد ✓";
+
+                }
+
+                catch (error) {
+
+                    fileStatus.textContent =
+                        "این JSON معتبر نیست.";
+
+                    fileStatus.classList.add(
+                        "file-error"
+                    );
+
+                }
+
+            }
+
+            else {
+
+                fileTextContent.value =
+                    currentTextContent;
+
+                fileStatus.textContent =
+                    "این نوع فایل نیاز به فرمت مخصوص ندارد.";
+
+            }
+
+        }
+
+
+        /* =========================================
+           CLEAR
+        ========================================= */
+
+        function clearFileLab() {
+
+            currentFile = null;
+
+            currentTextContent = "";
+
+            if (fileLabInput) {
+                fileLabInput.value = "";
+            }
+
+            fileInfo.classList.remove("active");
+
+            resetFileOutput();
+
+            fileStatus.textContent = "";
+
+        }
+
+
+    </script>
+
+
+    <!-- =========================================
+         MAIN SCRIPT
+    ========================================= -->
 
     <script src="script.js"></script>
 
-    <!-- Animated Stars Background -->
 
-    <script src="stars.js"></script>
+    <!-- =========================================
+         ILVEX AURORA BACKGROUND
+    ========================================= -->
+
+    <script src="aurora.js"></script>
 
 </body>
 

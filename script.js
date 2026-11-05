@@ -1,1053 +1,1655 @@
-/* =====================================================
-   ilvex 2.0
-   Main JavaScript
-   Tools + Market Prices + Security
-===================================================== */
-
 "use strict";
 
+/* =========================================================
+   ILVEX — MAIN SCRIPT
+   No Supabase
+   LocalStorage based
+========================================================= */
 
-/* =====================================================
-   1. ابزارهای عمومی
-===================================================== */
+(function () {
 
-function toEnglishDigits(value) {
-    const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
-    const arabicDigits = "٠١٢٣٤٥٦٧٨٩";
+    /* =====================================================
+       LANGUAGE
+    ===================================================== */
 
-    return String(value ?? "")
-        .replace(/[۰-۹]/g, d => persianDigits.indexOf(d))
-        .replace(/[٠-٩]/g, d => arabicDigits.indexOf(d))
-        .replace(/٫/g, ".")
-        .replace(/٬/g, "")
-        .replace(/،/g, ",");
-}
-
-function getNumber(id) {
-    const element = document.getElementById(id);
-
-    if (!element) return NaN;
-
-    const value = toEnglishDigits(element.value)
-        .replace(/[\s,]/g, "")
-        .trim();
-
-    return value === "" ? NaN : Number(value);
-}
-
-function formatNumber(value, digits = 2) {
-    if (!Number.isFinite(value)) return "—";
-
-    const language =
-        typeof window.ilvexGetLanguage === "function"
-            ? window.ilvexGetLanguage()
-            : "fa";
-
-    return new Intl.NumberFormat(
-        language === "en" ? "en-US" : "fa-IR",
-        {
-            maximumFractionDigits: digits
-        }
-    ).format(value);
-}
-
-function showResult(id, message) {
-    const element = document.getElementById(id);
-
-    if (element) {
-        element.textContent = String(message);
-    }
-}
-
-function gcd(a, b) {
-    a = Math.abs(a);
-    b = Math.abs(b);
-
-    while (b) {
-        [a, b] = [b, a % b];
-    }
-
-    return a || 1;
-}
-
-
-/* =====================================================
-   2. ماشین‌حساب امن
-===================================================== */
-
-function safeCalculateExpression(source) {
-    const expression = toEnglishDigits(source)
-        .replace(/[×]/g, "*")
-        .replace(/[÷]/g, "/")
-        .replace(/[−–]/g, "-")
-        .trim();
-
-    if (!expression) {
-        throw new Error("empty");
-    }
-
-    if (!/^[0-9+\-*/().\s]+$/.test(expression)) {
-        throw new Error("invalid-characters");
-    }
-
-    const tokenPattern = /\d+(?:\.\d*)?|\.\d+|[()+*/-]/g;
-    const tokens = expression.match(tokenPattern) || [];
-
-    if (tokens.join("") !== expression.replace(/\s/g, "")) {
-        throw new Error("invalid-expression");
-    }
-
-    let position = 0;
-
-    function peek() {
-        return tokens[position];
-    }
-
-    function consume() {
-        return tokens[position++];
-    }
-
-    function parsePrimary() {
-        const token = peek();
-
-        if (token === undefined) {
-            throw new Error("unexpected-end");
+    function getLanguage() {
+        if (typeof window.ilvexGetLanguage === "function") {
+            return window.ilvexGetLanguage();
         }
 
-        if (token === "(") {
-            consume();
-
-            const value = parseExpression();
-
-            if (peek() !== ")") {
-                throw new Error("missing-parenthesis");
-            }
-
-            consume();
-
-            return value;
+        if (typeof window.zonivaGetLanguage === "function") {
+            return window.zonivaGetLanguage();
         }
 
-        if (
-            token === ")" ||
-            token === "*" ||
-            token === "/"
-        ) {
-            throw new Error("invalid-number");
+        return localStorage.getItem("ilvex-language") || "fa";
+    }
+
+    function isEnglish() {
+        return getLanguage() === "en";
+    }
+
+    function fa(text, english) {
+        return isEnglish() ? english : text;
+    }
+
+
+    /* =====================================================
+       GENERAL HELPERS
+    ===================================================== */
+
+    function $(id) {
+        return document.getElementById(id);
+    }
+
+    function toEnglishNumber(value) {
+        if (value === undefined || value === null) {
+            return "";
         }
 
-        if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(token)) {
-            throw new Error("invalid-number");
+        return String(value)
+            .replace(/[۰-۹]/g, function (d) {
+                return "۰۱۲۳۴۵۶۷۸۹".indexOf(d);
+            })
+            .replace(/[٠-٩]/g, function (d) {
+                return "٠١٢٣٤٥٦٧٨٩".indexOf(d);
+            });
+    }
+
+    function getNumber(value) {
+        value = toEnglishNumber(value);
+
+        if (typeof value === "string") {
+            value = value.replace(/,/g, "");
         }
 
-        consume();
+        return Number(value);
+    }
 
-        const number = Number(token);
-
-        if (!Number.isFinite(number)) {
-            throw new Error("invalid-number");
+    function formatNumber(value) {
+        if (!Number.isFinite(value)) {
+            return "";
         }
 
-        return number;
+        return value.toLocaleString("en-US", {
+            maximumFractionDigits: 10
+        });
     }
 
-    function parseUnary() {
-        if (peek() === "+") {
-            consume();
-            return parseUnary();
-        }
-
-        if (peek() === "-") {
-            consume();
-            return -parseUnary();
-        }
-
-        return parsePrimary();
+    function escapeHTML(value) {
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
-    function parseTerm() {
-        let value = parseUnary();
 
-        while (peek() === "*" || peek() === "/") {
-            const operator = consume();
-            const right = parseUnary();
+    /* =====================================================
+       CALCULATOR
+    ===================================================== */
 
-            if (operator === "*") {
-                value *= right;
-            } else {
-                if (right === 0) {
-                    throw new Error("division-by-zero");
-                }
+    window.appendToDisplay = function (value) {
+        const display = $("display");
 
-                value /= right;
-            }
+        if (!display) return;
 
-            if (!Number.isFinite(value)) {
-                throw new Error("overflow");
-            }
-        }
-
-        return value;
-    }
-
-    function parseExpression() {
-        let value = parseTerm();
-
-        while (peek() === "+" || peek() === "-") {
-            const operator = consume();
-            const right = parseTerm();
-
-            if (operator === "+") {
-                value += right;
-            } else {
-                value -= right;
-            }
-
-            if (!Number.isFinite(value)) {
-                throw new Error("overflow");
-            }
-        }
-
-        return value;
-    }
-
-    const result = parseExpression();
-
-    if (position !== tokens.length) {
-        throw new Error("unexpected-token");
-    }
-
-    if (!Number.isFinite(result)) {
-        throw new Error("invalid-result");
-    }
-
-    return result;
-}
-
-function calculate() {
-    const input = document.getElementById("calcInput");
-
-    if (!input) return;
-
-    try {
-        const result = safeCalculateExpression(input.value);
-
-        showResult("calcResult", formatNumber(result, 10));
-    } catch (error) {
-        const language = window.ilvexGetLanguage?.() || "fa";
-
-        const messages = {
-            empty: {
-                fa: "لطفاً عبارت ریاضی را وارد کنید.",
-                en: "Please enter a mathematical expression."
-            },
-
-            "invalid-characters": {
-                fa: "عبارت شامل نویسه‌های غیرمجاز است.",
-                en: "The expression contains invalid characters."
-            },
-
-            "division-by-zero": {
-                fa: "تقسیم بر صفر تعریف نشده است.",
-                en: "Division by zero is undefined."
-            },
-
-            overflow: {
-                fa: "نتیجه خارج از محدوده قابل محاسبه است.",
-                en: "The result is outside the supported range."
-            }
-        };
-
-        const message =
-            messages[error.message]?.[language] ||
-            (
-                language === "en"
-                    ? "The mathematical expression is invalid."
-                    : "عبارت ریاضی صحیح نیست."
-            );
-
-        showResult("calcResult", message);
-    }
-}
-
-
-/* =====================================================
-   3. مدیریت پنجره‌های ابزار
-===================================================== */
-
-function openTool(id) {
-    const modal = document.getElementById(id);
-
-    if (!modal) return;
-
-    modal.style.display = "flex";
-    modal.setAttribute("aria-hidden", "false");
-
-    document.body.style.overflow = "hidden";
-
-    const focusable = modal.querySelector(
-        "input:not([type=hidden]), textarea, select, button"
-    );
-
-    if (focusable) {
-        setTimeout(() => focusable.focus(), 0);
-    }
-}
-
-function closeTool(id) {
-    const modal = document.getElementById(id);
-
-    if (!modal) return;
-
-    modal.style.display = "none";
-    modal.setAttribute("aria-hidden", "true");
-
-    const openModals = Array.from(
-        document.querySelectorAll(".modal, .tool-modal")
-    ).some(item => getComputedStyle(item).display !== "none");
-
-    if (!openModals) {
-        document.body.style.overflow = "";
-    }
-}
-
-
-/* =====================================================
-   4. شمارش متن
-===================================================== */
-
-function updateTextCounts() {
-    const input = document.getElementById("textInput");
-
-    if (!input) return;
-
-    const text = input.value;
-
-    const words = text.trim()
-        ? text.trim().split(/\s+/u).length
-        : 0;
-
-    showResult("wordCount", formatNumber(words, 0));
-
-    showResult(
-        "charCount",
-        formatNumber(text.length, 0)
-    );
-
-    showResult(
-        "charNoSpaceCount",
-        formatNumber(text.replace(/\s/g, "").length, 0)
-    );
-
-    showResult(
-        "lineCount",
-        formatNumber(
-            text.length ? text.split(/\r\n|\r|\n/).length : 0,
-            0
-        )
-    );
-}
-
-
-/* =====================================================
-   5. تبدیل واحد طول
-===================================================== */
-
-function convertUnit() {
-    const value = getNumber("unitInput");
-
-    const from = document.getElementById("unitFrom");
-    const to = document.getElementById("unitTo");
-
-    if (!from || !to) return;
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    if (!Number.isFinite(value)) {
-        return showResult(
-            "unitResult",
-            language === "en"
-                ? "Please enter a valid number."
-                : "لطفاً یک عدد معتبر وارد کنید."
-        );
-    }
-
-    const factors = {
-        mm: 0.001,
-        cm: 0.01,
-        m: 1,
-        km: 1000
+        display.value += value;
     };
 
-    if (
-        !Object.hasOwn(factors, from.value) ||
-        !Object.hasOwn(factors, to.value)
-    ) {
-        return showResult(
-            "unitResult",
-            language === "en"
-                ? "Please select valid units."
-                : "واحدهای انتخاب‌شده معتبر نیستند."
-        );
-    }
 
-    const result =
-        value * factors[from.value] / factors[to.value];
+    window.clearDisplay = function () {
+        const display = $("display");
 
-    showResult("unitResult", formatNumber(result, 8));
-}
+        if (!display) return;
 
+        display.value = "";
+    };
 
-/* =====================================================
-   6. محاسبه معدل
-===================================================== */
 
-function calculateGrade() {
-    const input = document.getElementById("gradeInput");
+    window.deleteLast = function () {
+        const display = $("display");
 
-    if (!input) return;
+        if (!display) return;
 
-    const language = window.ilvexGetLanguage?.() || "fa";
+        display.value = display.value.slice(0, -1);
+    };
 
-    const raw = toEnglishDigits(input.value).trim();
 
-    if (!raw) {
-        return showResult(
-            "gradeResult",
-            language === "en"
-                ? "Please enter your grades."
-                : "لطفاً نمره‌ها را وارد کنید."
-        );
-    }
+    window.calculate = function () {
+        const display = $("display");
 
-    const grades = raw
-        .split(/[\s,،;]+/)
-        .filter(Boolean)
-        .map(Number);
+        if (!display) return;
 
-    if (
-        grades.length === 0 ||
-        grades.some(
-            grade => !Number.isFinite(grade) ||
-            grade < 0 ||
-            grade > 20
-        )
-    ) {
-        return showResult(
-            "gradeResult",
-            language === "en"
-                ? "Enter valid grades between 0 and 20."
-                : "نمره‌های معتبر بین ۰ تا ۲۰ وارد کنید."
-        );
-    }
+        try {
+            let expression = display.value;
 
-    const average =
-        grades.reduce((sum, grade) => sum + grade, 0) /
-        grades.length;
+            expression = expression
+                .replace(/×/g, "*")
+                .replace(/÷/g, "/")
+                .replace(/−/g, "-")
+                .replace(/,/g, "");
 
-    showResult(
-        "gradeResult",
-        language === "en"
-            ? `Your average: ${formatNumber(average, 2)}`
-            : `معدل شما: ${formatNumber(average, 2)}`
-    );
-}/* =====================================================
-   7. تبدیل کسر به اعشار و برعکس
-===================================================== */
-
-function fractionToDecimal() {
-    const numerator = getNumber("fractionNumerator");
-    const denominator = getNumber("fractionDenominator");
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    if (
-        !Number.isFinite(numerator) ||
-        !Number.isFinite(denominator)
-    ) {
-        return showResult(
-            "fractionResult",
-            language === "en"
-                ? "Please enter valid numbers."
-                : "لطفاً اعداد معتبر وارد کنید."
-        );
-    }
-
-    if (denominator === 0) {
-        return showResult(
-            "fractionResult",
-            language === "en"
-                ? "The denominator cannot be zero."
-                : "مخرج کسر نمی‌تواند صفر باشد."
-        );
-    }
-
-    const result = numerator / denominator;
-
-    showResult(
-        "fractionResult",
-        formatNumber(result, 10)
-    );
-}
-
-
-function decimalToFraction() {
-    const input = document.getElementById("decimalInput");
-
-    if (!input) return;
-
-    const value = Number(
-        toEnglishDigits(input.value).replace(/,/g, "")
-    );
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    if (!Number.isFinite(value)) {
-        return showResult(
-            "decimalResult",
-            language === "en"
-                ? "Please enter a valid decimal number."
-                : "لطفاً یک عدد اعشاری معتبر وارد کنید."
-        );
-    }
-
-    const precision = 1000000;
-
-    let numerator = Math.round(value * precision);
-    let denominator = precision;
-
-    const divisor = gcd(numerator, denominator);
-
-    numerator /= divisor;
-    denominator /= divisor;
-
-    showResult(
-        "decimalResult",
-        `${numerator} / ${denominator}`
-    );
-}
-
-
-/* =====================================================
-   8. تولید رمز عبور
-===================================================== */
-
-function generatePassword() {
-    const lengthInput = document.getElementById("passwordLength");
-
-    const length = lengthInput
-        ? Number(toEnglishDigits(lengthInput.value))
-        : 12;
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    if (
-        !Number.isInteger(length) ||
-        length < 4 ||
-        length > 128
-    ) {
-        return showResult(
-            "passwordResult",
-            language === "en"
-                ? "Password length must be between 4 and 128."
-                : "طول رمز عبور باید بین ۴ تا ۱۲۸ باشد."
-        );
-    }
-
-    const lowercase = "abcdefghijklmnopqrstuvwxyz";
-    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const numbers = "0123456789";
-    const symbols = "!@#$%^&*()-_=+[]{}";
-
-    const characters =
-        lowercase + uppercase + numbers + symbols;
-
-    const randomValues = new Uint32Array(length);
-
-    crypto.getRandomValues(randomValues);
-
-    let password = "";
-
-    for (let i = 0; i < length; i++) {
-        password += characters[
-            randomValues[i] % characters.length
-        ];
-    }
-
-    const output = document.getElementById("passwordResult");
-
-    if (output) {
-        output.textContent = password;
-    }
-}
-
-
-async function copyPassword() {
-    const output = document.getElementById("passwordResult");
-
-    if (!output || !output.textContent.trim()) return;
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    try {
-        await navigator.clipboard.writeText(
-            output.textContent.trim()
-        );
-
-        showResult(
-            "passwordCopyStatus",
-            language === "en"
-                ? "Password copied!"
-                : "رمز عبور کپی شد!"
-        );
-    } catch (error) {
-        showResult(
-            "passwordCopyStatus",
-            language === "en"
-                ? "Copy failed."
-                : "کپی کردن ناموفق بود."
-        );
-    }
-}
-
-
-/* =====================================================
-   9. توان و ریشه
-===================================================== */
-
-function calculatePower() {
-    const base = getNumber("powerBase");
-    const exponent = getNumber("powerExponent");
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    if (
-        !Number.isFinite(base) ||
-        !Number.isFinite(exponent)
-    ) {
-        return showResult(
-            "powerResult",
-            language === "en"
-                ? "Please enter valid numbers."
-                : "لطفاً اعداد معتبر وارد کنید."
-        );
-    }
-
-    const result = Math.pow(base, exponent);
-
-    if (!Number.isFinite(result)) {
-        return showResult(
-            "powerResult",
-            language === "en"
-                ? "The result is invalid."
-                : "نتیجه قابل محاسبه نیست."
-        );
-    }
-
-    showResult(
-        "powerResult",
-        formatNumber(result, 10)
-    );
-}
-
-
-function calculateRoot() {
-    const number = getNumber("rootNumber");
-    const degree = getNumber("rootDegree");
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    if (
-        !Number.isFinite(number) ||
-        !Number.isInteger(degree) ||
-        degree === 0
-    ) {
-        return showResult(
-            "rootResult",
-            language === "en"
-                ? "Enter a valid number and non-zero integer degree."
-                : "عدد و درجه ریشه معتبر وارد کنید."
-        );
-    }
-
-    if (number < 0 && degree % 2 === 0) {
-        return showResult(
-            "rootResult",
-            language === "en"
-                ? "Even roots of negative numbers are not real."
-                : "ریشه زوج عدد منفی در اعداد حقیقی تعریف نشده است."
-        );
-    }
-
-    let result;
-
-    if (number < 0) {
-        result = -Math.pow(
-            Math.abs(number),
-            1 / degree
-        );
-    } else {
-        result = Math.pow(number, 1 / degree);
-    }
-
-    if (!Number.isFinite(result)) {
-        return showResult(
-            "rootResult",
-            language === "en"
-                ? "The result is invalid."
-                : "نتیجه معتبر نیست."
-        );
-    }
-
-    showResult(
-        "rootResult",
-        formatNumber(result, 10)
-    );
-}
-
-
-/* =====================================================
-   10. اختلاف تاریخ
-===================================================== */
-
-function calculateDateDifference() {
-    const startInput = document.getElementById("startDate");
-    const endInput = document.getElementById("endDate");
-
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    if (!startInput || !endInput) return;
-
-    if (!startInput.value || !endInput.value) {
-        return showResult(
-            "dateResult",
-            language === "en"
-                ? "Please select both dates."
-                : "لطفاً هر دو تاریخ را انتخاب کنید."
-        );
-    }
-
-    const startDate = new Date(
-        `${startInput.value}T00:00:00`
-    );
-
-    const endDate = new Date(
-        `${endInput.value}T00:00:00`
-    );
-
-    if (
-        Number.isNaN(startDate.getTime()) ||
-        Number.isNaN(endDate.getTime())
-    ) {
-        return showResult(
-            "dateResult",
-            language === "en"
-                ? "Invalid date."
-                : "تاریخ واردشده معتبر نیست."
-        );
-    }
-
-    const difference = Math.abs(
-        endDate.getTime() - startDate.getTime()
-    );
-
-    const days = Math.floor(
-        difference / (1000 * 60 * 60 * 24)
-    );
-
-    const weeks = Math.floor(days / 7);
-    const remainingDays = days % 7;
-
-    const result = language === "en"
-        ? `${days} days (${weeks} weeks and ${remainingDays} days)`
-        : `${formatNumber(days, 0)} روز ( ${formatNumber(weeks, 0)} هفته و ${formatNumber(remainingDays, 0)} روز )`;
-
-    showResult("dateResult", result);
-}
-
-
-/* =====================================================
-   11. راه‌اندازی رویدادهای ابزارها
-===================================================== */
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const textInput = document.getElementById("textInput");
-
-    if (textInput) {
-        textInput.addEventListener(
-            "input",
-            updateTextCounts
-        );
-
-        updateTextCounts();
-    }
-
-    const calcInput = document.getElementById("calcInput");
-
-    if (calcInput) {
-        calcInput.addEventListener("keydown", function (event) {
-            if (event.key === "Enter") {
-                calculate();
+            if (!expression.trim()) {
+                return;
             }
-        });
-    }
 
-    document.querySelectorAll("[data-close-modal]").forEach(button => {
-        button.addEventListener("click", function () {
-            const modal = button.closest(".modal, .tool-modal");
+            const result = Function(
+                '"use strict"; return (' +
+                expression +
+                ')'
+            )();
 
-            if (modal && modal.id) {
-                closeTool(modal.id);
+            if (!Number.isFinite(result)) {
+                throw new Error("Invalid result");
             }
-        });
-    });
 
-    document.querySelectorAll(".modal, .tool-modal").forEach(modal => {
-        modal.addEventListener("click", function (event) {
-            if (event.target === modal) {
-                closeTool(modal.id);
-            }
-        });
-    });
+            display.value = result;
 
-});/* =====================================================
-   12. دریافت قیمت ارز و طلا
-===================================================== */
+        } catch (error) {
 
-const ILVEX_MARKET_API = {
-    currency: "https://api.exchangerate-api.com/v4/latest/USD",
-    gold: "https://api.gold-api.com/price/XAU"
-};
+            display.value = fa(
+                "خطا",
+                "Error"
+            );
+        }
+    };
 
-async function fetchCurrencyPrices() {
-    const language = window.ilvexGetLanguage?.() || "fa";
 
-    try {
-        const response = await fetch(ILVEX_MARKET_API.currency);
+    /* =====================================================
+       LENGTH CONVERTER
+    ===================================================== */
 
-        if (!response.ok) {
-            throw new Error("Currency API error");
+    window.convertLength = function () {
+
+        const input = $("lengthInput");
+        const from = $("lengthFrom");
+        const to = $("lengthTo");
+        const result = $("lengthResult");
+
+        if (!input || !from || !to || !result) {
+            return;
         }
 
-        const data = await response.json();
+        const value = getNumber(input.value);
 
-        const rates = data.rates;
+        if (!Number.isFinite(value)) {
 
-        if (!rates) {
-            throw new Error("Invalid currency data");
+            result.textContent = fa(
+                "یک عدد معتبر وارد کنید.",
+                "Enter a valid number."
+            );
+
+            return;
         }
 
-        const usdToEur = rates.EUR;
-        const usdToTry = rates.TRY;
-        const usdToGbp = rates.GBP;
+        const units = {
+            mm: 0.001,
+            cm: 0.01,
+            m: 1,
+            km: 1000
+        };
 
-        showResult(
-            "eurRate",
-            usdToEur
-                ? formatNumber(usdToEur, 4)
-                : "—"
-        );
-
-        showResult(
-            "tryRate",
-            usdToTry
-                ? formatNumber(usdToTry, 2)
-                : "—"
-        );
-
-        showResult(
-            "gbpRate",
-            usdToGbp
-                ? formatNumber(usdToGbp, 4)
-                : "—"
-        );
-
-        showResult(
-            "currencyUpdate",
-            language === "en"
-                ? "Prices updated successfully."
-                : "قیمت‌ها با موفقیت به‌روزرسانی شدند."
-        );
-
-    } catch (error) {
-        showResult(
-            "currencyUpdate",
-            language === "en"
-                ? "Unable to retrieve currency prices."
-                : "دریافت قیمت ارز امکان‌پذیر نیست."
-        );
-
-        console.error("ILVEX Currency Error:", error);
-    }
-}
-
-
-/* =====================================================
-   13. دریافت قیمت جهانی طلا
-===================================================== */
-
-async function fetchGoldPrice() {
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    try {
-        const response = await fetch(ILVEX_MARKET_API.gold);
-
-        if (!response.ok) {
-            throw new Error("Gold API error");
-        }
-
-        const data = await response.json();
-
-        const price = Number(
-            data.price || data.ask || data.bid
-        );
-
-        if (!Number.isFinite(price)) {
-            throw new Error("Invalid gold price");
-        }
-
-        showResult(
-            "goldPrice",
-            formatNumber(price, 2)
-        );
-
-        showResult(
-            "goldUpdate",
-            language === "en"
-                ? "Gold price updated."
-                : "قیمت طلا به‌روزرسانی شد."
-        );
-
-    } catch (error) {
-        showResult(
-            "goldUpdate",
-            language === "en"
-                ? "Unable to retrieve gold price."
-                : "دریافت قیمت طلا امکان‌پذیر نیست."
-        );
-
-        console.error("ILVEX Gold Error:", error);
-    }
-}
-
-
-/* =====================================================
-   14. به‌روزرسانی اطلاعات بازار
-===================================================== */
-
-async function updateMarketPrices() {
-    await Promise.allSettled([
-        fetchCurrencyPrices(),
-        fetchGoldPrice()
-    ]);
-}
-
-
-/* =====================================================
-   15. زمان آخرین به‌روزرسانی
-===================================================== */
-
-function updateMarketTime() {
-    const language = window.ilvexGetLanguage?.() || "fa";
-
-    const now = new Date();
-
-    const formatted = new Intl.DateTimeFormat(
-        language === "en" ? "en-US" : "fa-IR",
-        {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit"
-        }
-    ).format(now);
-
-    showResult(
-        "marketLastUpdate",
-        language === "en"
-            ? `Last update: ${formatted}`
-            : `آخرین به‌روزرسانی: ${formatted}`
-    );
-}
-
-
-/* =====================================================
-   16. مدیریت منوی موبایل
-===================================================== */
-
-function setupMobileMenu() {
-    const menuButton = document.getElementById("menuToggle");
-
-    const mobileMenu = document.getElementById("mobileMenu");
-
-    if (!menuButton || !mobileMenu) return;
-
-    function closeMenu() {
-        mobileMenu.classList.remove("active");
-
-        menuButton.classList.remove("active");
-
-        menuButton.setAttribute("aria-expanded", "false");
-    }
-
-    function toggleMenu() {
-        const isOpen = mobileMenu.classList.toggle("active");
-
-        menuButton.classList.toggle("active", isOpen);
-
-        menuButton.setAttribute(
-            "aria-expanded",
-            String(isOpen)
-        );
-    }
-
-    menuButton.addEventListener("click", function (event) {
-        event.stopPropagation();
-
-        toggleMenu();
-    });
-
-    mobileMenu.addEventListener("click", function (event) {
-        const link = event.target.closest("a");
-
-        if (link) {
-            closeMenu();
-        }
-
-        event.stopPropagation();
-    });
-
-    document.addEventListener("click", function (event) {
         if (
-            !mobileMenu.contains(event.target) &&
-            !menuButton.contains(event.target)
+            !Object.prototype.hasOwnProperty.call(units, from.value) ||
+            !Object.prototype.hasOwnProperty.call(units, to.value)
         ) {
-            closeMenu();
+            return;
         }
-    });
 
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            closeMenu();
+        const meters =
+            value * units[from.value];
+
+        const converted =
+            meters / units[to.value];
+
+        result.textContent =
+            formatNumber(converted);
+    };
+
+
+    /* =====================================================
+       TEXT COUNTER
+    ===================================================== */
+
+    window.countText = function () {
+
+        const input =
+            $("textInput") ||
+            $("counterInput");
+
+        const result =
+            $("textResult") ||
+            $("counterResult");
+
+        if (!input || !result) {
+            return;
         }
-    });
-}
+
+        const text = input.value;
+
+        const characters =
+            text.length;
+
+        const charactersWithoutSpaces =
+            text.replace(/\s/g, "").length;
+
+        const words =
+            text.trim()
+                ? text.trim().split(/\s+/).length
+                : 0;
+
+        result.innerHTML = `
+            <div>
+                ${fa("تعداد کاراکتر", "Characters")}:
+                ${characters}
+            </div>
+
+            <div>
+                ${fa("بدون فاصله", "Without spaces")}:
+                ${charactersWithoutSpaces}
+            </div>
+
+            <div>
+                ${fa("تعداد کلمات", "Words")}:
+                ${words}
+            </div>
+        `;
+    };
 
 
-/* =====================================================
-   17. راه‌اندازی ابزارها و منو
-===================================================== */
+    /* =====================================================
+       AVERAGE
+    ===================================================== */
 
-document.addEventListener("DOMContentLoaded", function () {
+    window.calculateAverage = function () {
 
-    setupMobileMenu();
+        const input =
+            $("averageInput") ||
+            $("gradesInput");
 
-    updateMarketPrices();
+        const result =
+            $("averageResult");
 
-    updateMarketTime();
+        if (!input || !result) {
+            return;
+        }
 
-    setInterval(updateMarketPrices, 5 * 60 * 1000);
+        const numbers =
+            input.value
+                .split(/[\s,،]+/)
+                .map(getNumber)
+                .filter(Number.isFinite);
 
-    setInterval(updateMarketTime, 1000);
+        if (numbers.length === 0) {
+
+            result.textContent = fa(
+                "نمرات خود را وارد کنید.",
+                "Enter your grades."
+            );
+
+            return;
+        }
+
+        const sum =
+            numbers.reduce(
+                function (total, number) {
+                    return total + number;
+                },
+                0
+            );
+
+        const average =
+            sum / numbers.length;
+
+        result.textContent =
+            fa("معدل: ", "Average: ") +
+            formatNumber(average);
+    };
+
+
+    /* =====================================================
+       FRACTION → DECIMAL
+    ===================================================== */
+
+    window.fractionToDecimal = function () {
+
+        const input = $("fractionInput");
+        const result = $("fractionResult");
+
+        if (!input || !result) {
+            return;
+        }
+
+        const value =
+            toEnglishNumber(
+                input.value.trim()
+            );
+
+        if (!value.includes("/")) {
+
+            result.textContent = fa(
+                "کسر را به شکل 3/4 وارد کنید.",
+                "Use a format like 3/4."
+            );
+
+            return;
+        }
+
+        const parts =
+            value.split("/");
+
+        if (parts.length !== 2) {
+            return;
+        }
+
+        const numerator =
+            getNumber(parts[0]);
+
+        const denominator =
+            getNumber(parts[1]);
+
+        if (
+            !Number.isFinite(numerator) ||
+            !Number.isFinite(denominator) ||
+            denominator === 0
+        ) {
+
+            result.textContent = fa(
+                "کسر نامعتبر است.",
+                "Invalid fraction."
+            );
+
+            return;
+        }
+
+        result.textContent =
+            formatNumber(
+                numerator / denominator
+            );
+    };
+
+
+    /* =====================================================
+       DECIMAL → FRACTION
+    ===================================================== */
+
+    window.decimalToFraction = function () {
+
+        const input = $("decimalInput");
+        const result = $("decimalResult");
+
+        if (!input || !result) {
+            return;
+        }
+
+        const decimal =
+            getNumber(input.value);
+
+        if (!Number.isFinite(decimal)) {
+
+            result.textContent = fa(
+                "عدد نامعتبر است.",
+                "Invalid number."
+            );
+
+            return;
+        }
+
+        let denominator = 1;
+
+        while (
+            Math.abs(
+                decimal * denominator -
+                Math.round(
+                    decimal * denominator
+                )
+            ) > 1e-10 &&
+            denominator < 1000000
+        ) {
+            denominator *= 10;
+        }
+
+        let numerator =
+            Math.round(
+                decimal * denominator
+            );
+
+        function gcd(a, b) {
+
+            a = Math.abs(a);
+            b = Math.abs(b);
+
+            while (b !== 0) {
+                const temp = b;
+                b = a % b;
+                a = temp;
+            }
+
+            return a;
+        }
+
+        const divisor =
+            gcd(
+                numerator,
+                denominator
+            );
+
+        numerator /= divisor;
+        denominator /= divisor;
+
+        result.textContent =
+            denominator === 1
+                ? numerator
+                : `${numerator}/${denominator}`;
+    };
+
+
+    /* =====================================================
+       POWER
+    ===================================================== */
+
+    window.calculatePower = function () {
+
+        const base = $("powerBase");
+        const exponent = $("powerExponent");
+        const result = $("powerResult");
+
+        if (!base || !exponent || !result) {
+            return;
+        }
+
+        const a = getNumber(base.value);
+        const b = getNumber(exponent.value);
+
+        if (
+            !Number.isFinite(a) ||
+            !Number.isFinite(b)
+        ) {
+
+            result.textContent = fa(
+                "ورودی نامعتبر است.",
+                "Invalid input."
+            );
+
+            return;
+        }
+
+        result.textContent =
+            formatNumber(
+                Math.pow(a, b)
+            );
+    };
+
+
+    /* =====================================================
+       ROOT
+    ===================================================== */
+
+    window.calculateRoot = function () {
+
+        const number = $("rootNumber");
+        const degree = $("rootDegree");
+        const result = $("rootResult");
+
+        if (!number || !degree || !result) {
+            return;
+        }
+
+        const n =
+            getNumber(number.value);
+
+        const d =
+            getNumber(degree.value);
+
+        if (
+            !Number.isFinite(n) ||
+            !Number.isFinite(d) ||
+            d === 0
+        ) {
+
+            result.textContent = fa(
+                "ورودی نامعتبر است.",
+                "Invalid input."
+            );
+
+            return;
+        }
+
+        result.textContent =
+            formatNumber(
+                Math.pow(n, 1 / d)
+            );
+    };
+
+
+    /* =====================================================
+       PASSWORD GENERATOR
+    ===================================================== */
+
+    window.generatePassword = function () {
+
+        const lengthInput =
+            $("passwordLength");
+
+        const result =
+            $("passwordResult");
+
+        if (!result) {
+            return;
+        }
+
+        let length =
+            lengthInput
+                ? parseInt(
+                    lengthInput.value,
+                    10
+                )
+                : 16;
+
+        if (!Number.isFinite(length)) {
+            length = 16;
+        }
+
+        length =
+            Math.max(
+                4,
+                Math.min(
+                    128,
+                    length
+                )
+            );
+
+        const characters =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+            "abcdefghijklmnopqrstuvwxyz" +
+            "0123456789" +
+            "!@#$%^&*()_+-=[]{}";
+
+        let password = "";
+
+        if (
+            window.crypto &&
+            window.crypto.getRandomValues
+        ) {
+
+            const values =
+                new Uint32Array(length);
+
+            window.crypto.getRandomValues(
+                values
+            );
+
+            for (
+                let i = 0;
+                i < length;
+                i++
+            ) {
+
+                password +=
+                    characters[
+                        values[i] %
+                        characters.length
+                    ];
+            }
+
+        } else {
+
+            for (
+                let i = 0;
+                i < length;
+                i++
+            ) {
+
+                password +=
+                    characters[
+                        Math.floor(
+                            Math.random() *
+                            characters.length
+                        )
+                    ];
+            }
+        }
+
+        if ("value" in result) {
+            result.value = password;
+        }
+
+        result.textContent =
+            password;
+    };
+
+
+    window.copyPassword = async function () {
+
+        const result =
+            $("passwordResult");
+
+        if (!result) {
+            return;
+        }
+
+        const text =
+            "value" in result
+                ? result.value
+                : result.textContent;
+
+        try {
+
+            await navigator.clipboard.writeText(
+                text
+            );
+
+        } catch (error) {
+
+            const textarea =
+                document.createElement(
+                    "textarea"
+                );
+
+            textarea.value = text;
+
+            document.body.appendChild(
+                textarea
+            );
+
+            textarea.select();
+
+            document.execCommand(
+                "copy"
+            );
+
+            textarea.remove();
+        }
+    };
+
+
+    /* =====================================================
+       DATE DIFFERENCE
+    ===================================================== */
+
+    window.calculateDateDifference = function () {
+
+        const start =
+            $("startDate");
+
+        const end =
+            $("endDate");
+
+        const result =
+            $("dateDifferenceResult");
+
+        if (!start || !end || !result) {
+            return;
+        }
+
+        const startDate =
+            new Date(
+                start.value
+            );
+
+        const endDate =
+            new Date(
+                end.value
+            );
+
+        if (
+            Number.isNaN(
+                startDate.getTime()
+            ) ||
+            Number.isNaN(
+                endDate.getTime()
+            )
+        ) {
+
+            result.textContent = fa(
+                "هر دو تاریخ را انتخاب کنید.",
+                "Select both dates."
+            );
+
+            return;
+        }
+
+        const difference =
+            Math.abs(
+                endDate -
+                startDate
+            );
+
+        const days =
+            Math.floor(
+                difference /
+                (1000 * 60 * 60 * 24)
+            );
+
+        const hours =
+            Math.floor(
+                difference /
+                (1000 * 60 * 60)
+            );
+
+        result.innerHTML = `
+            <div>
+                ${fa(
+                    `${days} روز`,
+                    `${days} days`
+                )}
+            </div>
+
+            <div>
+                ${fa(
+                    `${hours} ساعت`,
+                    `${hours} hours`
+                )}
+            </div>
+        `;
+    };
+
+
+    /* =====================================================
+       CURRENCY
+    ===================================================== */
+
+    window.convertCurrency = function () {
+
+        const amount =
+            $("currencyAmount");
+
+        const rate =
+            $("currencyRate");
+
+        const result =
+            $("currencyResult");
+
+        if (!amount || !rate || !result) {
+            return;
+        }
+
+        const a =
+            getNumber(
+                amount.value
+            );
+
+        const r =
+            getNumber(
+                rate.value
+            );
+
+        if (
+            !Number.isFinite(a) ||
+            !Number.isFinite(r)
+        ) {
+
+            result.textContent = fa(
+                "ورودی نامعتبر است.",
+                "Invalid input."
+            );
+
+            return;
+        }
+
+        result.textContent =
+            formatNumber(
+                a * r
+            );
+    };
+
+
+    /* =====================================================
+       GOLD
+    ===================================================== */
+
+    window.calculateGold = function () {
+
+        const weight =
+            $("goldWeight");
+
+        const price =
+            $("goldPrice");
+
+        const result =
+            $("goldResult");
+
+        if (!weight || !price || !result) {
+            return;
+        }
+
+        const w =
+            getNumber(
+                weight.value
+            );
+
+        const p =
+            getNumber(
+                price.value
+            );
+
+        if (
+            !Number.isFinite(w) ||
+            !Number.isFinite(p)
+        ) {
+
+            result.textContent = fa(
+                "ورودی نامعتبر است.",
+                "Invalid input."
+            );
+
+            return;
+        }
+
+        const total =
+            w * p;
+
+        result.textContent =
+            formatNumber(
+                total
+            );
+    };
+
+
+    /* =====================================================
+       LOCAL STORAGE — EVENTS
+    ===================================================== */
+
+    const EVENT_STORAGE_KEY =
+        "ilvex-event-data";
+
+    function getEventData() {
+
+        try {
+
+            const data =
+                localStorage.getItem(
+                    EVENT_STORAGE_KEY
+                );
+
+            if (!data) {
+                return {
+                    nickname: "",
+                    score: 0,
+                    answers: [],
+                    completed: false
+                };
+            }
+
+            const parsed =
+                JSON.parse(data);
+
+            return {
+                nickname:
+                    parsed.nickname || "",
+
+                score:
+                    Number(
+                        parsed.score || 0
+                    ),
+
+                answers:
+                    Array.isArray(
+                        parsed.answers
+                    )
+                        ? parsed.answers
+                        : [],
+
+                completed:
+                    Boolean(
+                        parsed.completed
+                    )
+            };
+
+        } catch (error) {
+
+            return {
+                nickname: "",
+                score: 0,
+                answers: [],
+                completed: false
+            };
+        }
+    }
+
+
+    function saveEventData(data) {
+
+        try {
+
+            localStorage.setItem(
+                EVENT_STORAGE_KEY,
+                JSON.stringify(data)
+            );
+
+        } catch (error) {
+
+            console.error(
+                "ILVEX event save error:",
+                error
+            );
+        }
+    }
+
+
+    /* =====================================================
+       EVENT NICKNAME
+    ===================================================== */
+
+    function getNickname() {
+
+        return (
+            localStorage.getItem(
+                "ilvex-nickname"
+            ) ||
+            getEventData().nickname ||
+            ""
+        );
+    }
+
+
+    function saveNickname(nickname) {
+
+        localStorage.setItem(
+            "ilvex-nickname",
+            nickname
+        );
+
+        const data =
+            getEventData();
+
+        data.nickname =
+            nickname;
+
+        saveEventData(
+            data
+        );
+    }
+
+
+    /* =====================================================
+       EVENT SCORE
+    ===================================================== */
+
+    function getEventScore() {
+
+        return getEventData().score;
+    }
+
+
+    function setEventScore(score) {
+
+        const data =
+            getEventData();
+
+        data.score =
+            Number(score) || 0;
+
+        saveEventData(
+            data
+        );
+    }
+
+
+    /* =====================================================
+       EVENT ANSWERS
+    ===================================================== */
+
+    function saveEventAnswers(answers) {
+
+        const data =
+            getEventData();
+
+        data.answers =
+            answers;
+
+        saveEventData(
+            data
+        );
+    }
+
+
+    /* =====================================================
+       MOBILE MENU
+    ===================================================== */
+
+    function setupMobileMenu() {
+
+        const menuButton =
+            document.querySelector(
+                "#menuBtn, .menu-btn, .hamburger, [data-menu-button]"
+            );
+
+        const menu =
+            document.querySelector(
+                "#mobileMenu, #navMenu, .nav-links, [data-menu]"
+            );
+
+        const overlay =
+            document.querySelector(
+                "#menuOverlay, .menu-overlay, [data-menu-overlay]"
+            );
+
+        if (!menuButton || !menu) {
+            return;
+        }
+
+        if (
+            menuButton.dataset.ilvexReady === "true"
+        ) {
+            return;
+        }
+
+        menuButton.dataset.ilvexReady =
+            "true";
+
+        function openMenu() {
+
+            menu.classList.add(
+                "active"
+            );
+
+            menuButton.classList.add(
+                "active"
+            );
+
+            if (overlay) {
+
+                overlay.classList.add(
+                    "active"
+                );
+            }
+
+            document.body.classList.add(
+                "menu-open"
+            );
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+        }
+
+
+        function closeMenu() {
+
+            menu.classList.remove(
+                "active"
+            );
+
+            menuButton.classList.remove(
+                "active"
+            );
+
+            if (overlay) {
+
+                overlay.classList.remove(
+                    "active"
+                );
+            }
+
+            document.body.classList.remove(
+                "menu-open"
+            );
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+        }
+
+
+        function toggleMenu(event) {
+
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            if (
+                menu.classList.contains(
+                    "active"
+                )
+            ) {
+
+                closeMenu();
+
+            } else {
+
+                openMenu();
+            }
+        }
+
+
+        menuButton.addEventListener(
+            "click",
+            toggleMenu
+        );
+
+
+        if (overlay) {
+
+            overlay.addEventListener(
+                "click",
+                closeMenu
+            );
+        }
+
+
+        menu.querySelectorAll(
+            "a"
+        ).forEach(
+            function (link) {
+
+                link.addEventListener(
+                    "click",
+                    closeMenu
+                );
+            }
+        );
+
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    closeMenu();
+                }
+            }
+        );
+
+
+        window.ilvexOpenMenu =
+            openMenu;
+
+        window.ilvexCloseMenu =
+            closeMenu;
+    }
+
+
+    /* =====================================================
+       LOAD TOOLS PAGE
+    ===================================================== */
+
+    function loadToolsPageScript() {
+
+        if (
+            document.querySelector(
+                'script[data-ilvex-tools-loaded="true"]'
+            )
+        ) {
+            return;
+        }
+
+        const script =
+            document.createElement(
+                "script"
+            );
+
+        script.src =
+            "tools-page.js";
+
+        script.defer =
+            true;
+
+        script.dataset.ilvexToolsLoaded =
+            "true";
+
+        script.onerror =
+            function () {
+
+                console.error(
+                    "ILVEX: tools-page.js could not be loaded."
+                );
+            };
+
+        document.head.appendChild(
+            script
+        );
+    }
+
+
+    /* =====================================================
+       INITIALIZATION
+    ===================================================== */
+
+    function initILVEX() {
+
+        setupMobileMenu();
+
+        if (
+            location.pathname
+                .toLowerCase()
+                .includes("tools")
+        ) {
+
+            loadToolsPageScript();
+        }
+
+        if (
+            document.querySelector(
+                "#eventAnswer1"
+            )
+        ) {
+
+            initEventPage();
+        }
+
+        console.log(
+            "ILVEX loaded successfully 🚀"
+        );
+    }
+
+
+    /* =====================================================
+       EVENT PAGE
+    ===================================================== */
+
+    function initEventPage() {
+
+        const data =
+            getEventData();
+
+        const score =
+            $("eventScore");
+
+        if (score) {
+
+            score.textContent =
+                data.score;
+        }
+
+
+        const nickname =
+            getNickname();
+
+        if (nickname) {
+
+            const nicknameInput =
+                $("eventNickname");
+
+            if (nicknameInput) {
+                nicknameInput.value =
+                    nickname;
+            }
+        }
+
+
+        for (
+            let i = 0;
+            i < 5;
+            i++
+        ) {
+
+            const input =
+                $("eventAnswer" + (i + 1));
+
+            if (
+                input &&
+                data.answers[i]
+            ) {
+
+                input.value =
+                    data.answers[i];
+            }
+        }
+
+
+        const submitButton =
+            $("eventSubmit");
+
+        if (
+            submitButton &&
+            submitButton.dataset.ilvexEventReady !== "true"
+        ) {
+
+            submitButton.dataset.ilvexEventReady =
+                "true";
+
+            submitButton.addEventListener(
+                "click",
+                handleEventSubmit
+            );
+        }
+
+
+        renderLocalLeaderboard();
+    }
+
+
+    /* =====================================================
+       EVENT SUBMIT
+    ===================================================== */
+
+    function handleEventSubmit() {
+
+        const answers = [];
+
+        for (
+            let i = 1;
+            i <= 5;
+            i++
+        ) {
+
+            const input =
+                $("eventAnswer" + i);
+
+            answers.push(
+                input
+                    ? input.value.trim()
+                    : ""
+            );
+        }
+
+
+        const nicknameInput =
+            $("eventNickname");
+
+        let nickname =
+            nicknameInput
+                ? nicknameInput.value.trim()
+                : getNickname();
+
+
+        if (!nickname) {
+
+            nickname =
+                "ILVEX User";
+        }
+
+
+        saveNickname(
+            nickname
+        );
+
+        saveEventAnswers(
+            answers
+        );
+
+
+        /*
+         * فعلاً امتیاز بر اساس جواب‌های واردشده
+         * ذخیره می‌شود.
+         *
+         * جواب‌های صحیح واقعی را می‌توانی
+         * بعداً داخل همین بخش قرار بدهی.
+         */
+
+        let score = 0;
+
+        answers.forEach(
+            function (answer) {
+
+                if (
+                    answer.length > 0
+                ) {
+
+                    score++;
+                }
+            }
+        );
+
+
+        setEventScore(
+            score
+        );
+
+
+        const scoreElement =
+            $("eventScore");
+
+        if (scoreElement) {
+
+            scoreElement.textContent =
+                score;
+        }
+
+
+        const message =
+            $("eventMessage");
+
+        if (message) {
+
+            message.textContent =
+                fa(
+                    `امتیاز شما: ${score}`,
+                    `Your score: ${score}`
+                );
+        }
+
+
+        saveLocalLeaderboard(
+            nickname,
+            score
+        );
+
+        renderLocalLeaderboard();
+    }
+
+
+    /* =====================================================
+       LOCAL LEADERBOARD
+    ===================================================== */
+
+    const LEADERBOARD_KEY =
+        "ilvex-local-leaderboard";
+
+
+    function getLocalLeaderboard() {
+
+        try {
+
+            const data =
+                localStorage.getItem(
+                    LEADERBOARD_KEY
+                );
+
+            if (!data) {
+                return [];
+            }
+
+            const parsed =
+                JSON.parse(
+                    data
+                );
+
+            return Array.isArray(
+                parsed
+            )
+                ? parsed
+                : [];
+
+        } catch (error) {
+
+            return [];
+        }
+    }
+
+
+    function saveLocalLeaderboard(
+        nickname,
+        score
+    ) {
+
+        let leaderboard =
+            getLocalLeaderboard();
+
+        leaderboard.push({
+            nickname:
+                nickname,
+
+            score:
+                Number(score) || 0,
+
+            time:
+                Date.now()
+        });
+
+
+        leaderboard.sort(
+            function (a, b) {
+
+                if (
+                    b.score !==
+                    a.score
+                ) {
+
+                    return (
+                        b.score -
+                        a.score
+                    );
+                }
+
+                return (
+                    a.time -
+                    b.time
+                );
+            }
+        );
+
+
+        /*
+         * فقط 100 رکورد آخر
+         */
+        leaderboard =
+            leaderboard.slice(
+                0,
+                100
+            );
+
+
+        try {
+
+            localStorage.setItem(
+                LEADERBOARD_KEY,
+                JSON.stringify(
+                    leaderboard
+                )
+            );
+
+        } catch (error) {
+
+            console.error(
+                "ILVEX leaderboard save error:",
+                error
+            );
+        }
+    }
+
+
+    function renderLocalLeaderboard() {
+
+        const element =
+            $("eventLeaderboard");
+
+        if (!element) {
+            return;
+        }
+
+        const leaderboard =
+            getLocalLeaderboard();
+
+
+        if (
+            leaderboard.length === 0
+        ) {
+
+            element.innerHTML = `
+                <div class="leaderboard-empty">
+                    ${fa(
+                        "هنوز رتبه‌ای ثبت نشده است.",
+                        "No scores yet."
+                    )}
+                </div>
+            `;
+
+            return;
+        }
+
+
+        element.innerHTML = "";
+
+
+        leaderboard
+            .slice(0, 5)
+            .forEach(
+                function (
+                    player,
+                    index
+                ) {
+
+                    const row =
+                        document.createElement(
+                            "div"
+                        );
+
+                    row.className =
+                        "leaderboard-row";
+
+                    row.innerHTML = `
+                        <span class="rank">
+                            ${index + 1}
+                        </span>
+
+                        <span class="nickname">
+                            ${escapeHTML(
+                                player.nickname
+                            )}
+                        </span>
+
+                        <span class="score">
+                            ${player.score}
+                        </span>
+                    `;
+
+                    element.appendChild(
+                        row
+                    );
+                }
+            );
+    }
+
+
+    /* =====================================================
+       DOM READY
+    ===================================================== */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initILVEX
+        );
+
+    } else {
+
+        initILVEX();
+    }
+
+})();/* =========================================
+   ILVEX GOD MODE LOADING EXIT
+========================================= */
+
+window.addEventListener("load", () => {
+
+    const loadingScreen = document.getElementById("loadingScreen");
+
+    if (!loadingScreen) return;
+
+    // لودینگ دقیقاً 3 ثانیه روی صفحه بماند
+    setTimeout(() => {
+
+        // شروع انیمیشن خروج
+        loadingScreen.classList.add("ilvex-loading-exit");
+
+        // بعد از تمام شدن انیمیشن، کامل حذف شود
+        setTimeout(() => {
+            loadingScreen.remove();
+        }, 1500);
+
+    }, 3000);
 
 });
