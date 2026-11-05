@@ -3448,4 +3448,154 @@ textarea::placeholder {
         visibility: hidden;
         pointer-events: none;
     }
+}/* =====================================================
+   ILVEX — MOBILE MENU FINAL FIX
+   فقط منوی موبایل
+   هیچ بخش دیگری از سایت تغییر نمی‌کند
+===================================================== */
+
+@media (max-width: 700px) {
+
+    /* دکمه منو */
+    .menu-btn {
+        display: flex !important;
+        position: relative !important;
+        z-index: 10001 !important;
+
+        flex-shrink: 0 !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        cursor: pointer !important;
+        pointer-events: auto !important;
+    }
+
+
+    /* خود منو */
+    .menu {
+        position: fixed !important;
+
+        top: 50% !important;
+        left: 50% !important;
+
+        width: min(88vw, 370px) !important;
+        max-height: 78dvh !important;
+
+        margin: 0 !important;
+
+        display: none !important;
+        flex-direction: column !important;
+
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        padding: 22px 17px !important;
+
+        transform: translate(-50%, -50%) !important;
+
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+
+        z-index: 10000 !important;
+
+        border-radius: 25px !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* وقتی باز می‌شود */
+    .menu.active {
+        display: flex !important;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+
+        transform: translate(-50%, -50%) !important;
+
+        animation:
+            ilvexMobileMenuOpen
+            0.32s
+            cubic-bezier(.2, .8, .2, 1)
+            forwards !important;
+    }
+
+
+    /* لینک‌های داخل منو */
+    .menu a {
+        display: flex !important;
+
+        width: 100% !important;
+        min-height: 49px !important;
+
+        box-sizing: border-box !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        pointer-events: auto !important;
+    }
+
+
+    /* بک‌گراند پشت منو */
+    .menu-overlay {
+        position: fixed !important;
+
+        inset: 0 !important;
+
+        width: 100vw !important;
+        height: 100vh !important;
+
+        display: block !important;
+
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+
+        z-index: 9998 !important;
+
+        background: rgba(0, 3, 10, 0.68) !important;
+
+        transition:
+            opacity 0.25s ease,
+            visibility 0.25s ease !important;
+    }
+
+
+    /* Overlay وقتی منو باز است */
+    .menu-overlay.active {
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
+
+
+    /* خود هدر بالاتر از overlay */
+    .header {
+        position: relative !important;
+        z-index: 10001 !important;
+    }
+
+
+    /* جلوگیری از اسکرول صفحه هنگام باز بودن منو */
+    body.menu-open {
+        overflow: hidden !important;
+    }
+}
+
+
+/* انیمیشن باز شدن منو */
+@keyframes ilvexMobileMenuOpen {
+
+    from {
+        opacity: 0;
+        transform: translate(-50%, -47%) scale(0.94);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
