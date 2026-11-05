@@ -4132,4 +4132,225 @@ textarea::placeholder {
         pointer-events: none !important;
     }
 
+}/* ==========================================================
+   ILVEX MOBILE MENU — CLEAN FINAL SYSTEM
+   ========================================================== */
+
+@media (max-width: 700px) {
+
+    /* HEADER */
+    header.header {
+        position: relative !important;
+        z-index: 100001 !important;
+    }
+
+    /* MENU BUTTON */
+    #menuBtn {
+        display: flex !important;
+
+        position: relative !important;
+        z-index: 100003 !important;
+
+        width: 46px !important;
+        height: 46px !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        touch-action: manipulation !important;
+
+        border: 1px solid rgba(0, 200, 255, 0.35) !important;
+        border-radius: 14px !important;
+
+        background: rgba(5, 15, 25, 0.9) !important;
+
+        color: #fff !important;
+
+        -webkit-tap-highlight-color: transparent !important;
+    }
+
+    #menuBtn .menu-icon {
+        display: block !important;
+
+        color: #fff !important;
+
+        font-size: 24px !important;
+        line-height: 1 !important;
+
+        pointer-events: none !important;
+        user-select: none !important;
+    }
+
+
+    /* MENU */
+    #menu {
+        position: fixed !important;
+
+        top: 50% !important;
+        left: 50% !important;
+
+        width: calc(100vw - 40px) !important;
+        max-width: 360px !important;
+
+        max-height: 80vh !important;
+
+        margin: 0 !important;
+
+        padding: 18px !important;
+
+        box-sizing: border-box !important;
+
+        display: none !important;
+
+        flex-direction: column !important;
+
+        gap: 10px !important;
+
+        overflow-y: auto !important;
+
+        transform: translate(-50%, -50%) scale(.92) !important;
+
+        opacity: 0 !important;
+        visibility: hidden !important;
+
+        pointer-events: none !important;
+
+        z-index: 100002 !important;
+
+        border: 1px solid rgba(0, 200, 255, .3) !important;
+        border-radius: 22px !important;
+
+        background: rgba(4, 12, 20, .98) !important;
+
+        box-shadow:
+            0 0 40px rgba(0, 180, 255, .2),
+            0 25px 80px rgba(0, 0, 0, .7) !important;
+
+        transition:
+            opacity .2s ease,
+            transform .2s ease,
+            visibility .2s ease !important;
+    }
+
+
+    /* MENU OPEN */
+    #menu.active {
+        display: flex !important;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+
+        pointer-events: auto !important;
+
+        transform: translate(-50%, -50%) scale(1) !important;
+    }
+
+
+    /* LINKS */
+    #menu a {
+        display: flex !important;
+
+        width: 100% !important;
+        min-height: 50px !important;
+
+        box-sizing: border-box !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        padding: 12px 15px !important;
+        margin: 0 !important;
+
+        border: 1px solid rgba(0, 200, 255, .12) !important;
+        border-radius: 13px !important;
+
+        background: rgba(255, 255, 255, .025) !important;
+
+        color: #fff !important;
+
+        text-decoration: none !important;
+
+        font-family: "Vazirmatn", sans-serif !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+
+        pointer-events: auto !important;
+    }
+
+
+    /* OVERLAY */
+    #menuOverlay {
+        position: fixed !important;
+
+        top: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+
+        width: 100vw !important;
+        height: 100vh !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        display: block !important;
+
+        opacity: 0 !important;
+        visibility: hidden !important;
+
+        pointer-events: none !important;
+
+        background: rgba(0, 0, 0, .6) !important;
+
+        z-index: 100000 !important;
+
+        transition:
+            opacity .2s ease,
+            visibility .2s ease !important;
+    }
+
+
+    /* ACTIVE OVERLAY */
+    #menuOverlay.active {
+        opacity: 1 !important;
+        visibility: visible !important;
+
+        pointer-events: auto !important;
+    }
+
+
+    /* IMPORTANT:
+       overlay is BEHIND menu and button */
+    #menuOverlay {
+        z-index: 100000 !important;
+    }
+
+    #menu {
+        z-index: 100002 !important;
+    }
+
+    #menuBtn {
+        z-index: 100003 !important;
+    }
+
+
+    /* STOP PAGE SCROLL WHEN MENU IS OPEN */
+    body.menu-open {
+        overflow: hidden !important;
+        touch-action: none !important;
+    }
+}
+
+
+/* DESKTOP */
+@media (min-width: 701px) {
+    #menuOverlay {
+        display: none !important;
+        pointer-events: none !important;
+    }
 }

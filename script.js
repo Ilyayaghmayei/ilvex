@@ -1004,167 +1004,131 @@
         );
     }
 
+/* =====================================================
+   ILVEX MOBILE MENU — FIXED
+===================================================== */
 
-    /* =====================================================
-       MOBILE MENU
-    ===================================================== */
+function setupMobileMenu() {
 
-    function setupMobileMenu() {
+    const menuButton = document.getElementById("menuBtn");
+    const menu = document.getElementById("menu");
+    const overlay = document.getElementById("menuOverlay");
 
-        const menuButton =
-            document.querySelector(
-                "#menuBtn, .menu-btn, .hamburger, [data-menu-button]"
-            );
+    // اگر عناصر منو وجود نداشتند، کاری نکن
+    if (!menuButton || !menu) {
+        console.error("ILVEX Mobile Menu: elements not found");
+        return;
+    }
 
-        const menu =
-            document.querySelector(
-                "#mobileMenu, #navMenu, .nav-links, [data-menu]"
-            );
+    // جلوگیری از اجرای دوباره
+    if (menuButton.dataset.ilvexReady === "true") {
+        return;
+    }
 
-        const overlay =
-            document.querySelector(
-                "#menuOverlay, .menu-overlay, [data-menu-overlay]"
-            );
+    menuButton.dataset.ilvexReady = "true";
 
-        if (!menuButton || !menu) {
-            return;
-        }
+    function openMenu() {
 
-        if (
-            menuButton.dataset.ilvexReady === "true"
-        ) {
-            return;
-        }
-
-        menuButton.dataset.ilvexReady =
-            "true";
-
-        function openMenu() {
-
-            menu.classList.add(
-                "active"
-            );
-
-            menuButton.classList.add(
-                "active"
-            );
-
-            if (overlay) {
-
-                overlay.classList.add(
-                    "active"
-                );
-            }
-
-            document.body.classList.add(
-                "menu-open"
-            );
-
-            menuButton.setAttribute(
-                "aria-expanded",
-                "true"
-            );
-        }
-
-
-        function closeMenu() {
-
-            menu.classList.remove(
-                "active"
-            );
-
-            menuButton.classList.remove(
-                "active"
-            );
-
-            if (overlay) {
-
-                overlay.classList.remove(
-                    "active"
-                );
-            }
-
-            document.body.classList.remove(
-                "menu-open"
-            );
-
-            menuButton.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-        }
-
-
-        function toggleMenu(event) {
-
-            if (event) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-
-            if (
-                menu.classList.contains(
-                    "active"
-                )
-            ) {
-
-                closeMenu();
-
-            } else {
-
-                openMenu();
-            }
-        }
-
-
-        menuButton.addEventListener(
-            "click",
-            toggleMenu
-        );
-
+        menu.classList.add("active");
+        menuButton.classList.add("active");
 
         if (overlay) {
-
-            overlay.addEventListener(
-                "click",
-                closeMenu
-            );
+            overlay.classList.add("active");
         }
 
+        document.body.classList.add("menu-open");
 
-        menu.querySelectorAll(
-            "a"
-        ).forEach(
-            function (link) {
+        menuButton.setAttribute("aria-expanded", "true");
 
-                link.addEventListener(
-                    "click",
-                    closeMenu
-                );
-            }
-        );
-
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (
-                    event.key === "Escape"
-                ) {
-
-                    closeMenu();
-                }
-            }
-        );
-
-
-        window.ilvexOpenMenu =
-            openMenu;
-
-        window.ilvexCloseMenu =
-            closeMenu;
+        // جلوگیری از اسکرول صفحه در حالت منو
+        document.body.style.overflow = "hidden";
     }
+
+    function closeMenu() {
+
+        menu.classList.remove("active");
+        menuButton.classList.remove("active");
+
+        if (overlay) {
+            overlay.classList.remove("active");
+        }
+
+        document.body.classList.remove("menu-open");
+
+        menuButton.setAttribute("aria-expanded", "false");
+
+        document.body.style.overflow = "";
+    }
+
+    function toggleMenu(event) {
+
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        if (menu.classList.contains("active")) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    }
+
+    /* =========================
+       MENU BUTTON
+    ========================= */
+
+    menuButton.addEventListener("click", toggleMenu);
+
+    /* =========================
+       OVERLAY
+    ========================= */
+
+    if (overlay) {
+
+        overlay.addEventListener("click", function (event) {
+            event.preventDefault();
+            closeMenu();
+        });
+
+    }
+
+    /* =========================
+       MENU LINKS
+    ========================= */
+
+    const menuLinks = menu.querySelectorAll("a");
+
+    menuLinks.forEach(function (link) {
+
+        link.addEventListener("click", function () {
+            closeMenu();
+        });
+
+    });
+
+    /* =========================
+       ESC KEY
+    ========================= */
+
+    document.addEventListener("keydown", function (event) {
+
+        if (event.key === "Escape") {
+            closeMenu();
+        }
+
+    });
+
+    /* =========================
+       GLOBAL FUNCTIONS
+    ========================= */
+
+    window.ilvexOpenMenu = openMenu;
+    window.ilvexCloseMenu = closeMenu;
+
+    console.log("ILVEX Mobile Menu: READY");
+}
+    
 
 
     /* =====================================================
@@ -1213,32 +1177,81 @@
        INITIALIZATION
     ===================================================== */
 
-    function initILVEX() {
+   function setupMobileMenu() {
+    const menuBtn = document.getElementById("menuBtn");
+    const menu = document.getElementById("menu");
+    const overlay = document.getElementById("menuOverlay");
 
-        setupMobileMenu();
-
-        if (
-            location.pathname
-                .toLowerCase()
-                .includes("tools")
-        ) {
-
-            loadToolsPageScript();
-        }
-
-        if (
-            document.querySelector(
-                "#eventAnswer1"
-            )
-        ) {
-
-            initEventPage();
-        }
-
-        console.log(
-            "ILVEX loaded successfully 🚀"
-        );
+    if (!menuBtn || !menu) {
+        console.error("ILVEX: Mobile menu elements not found.");
+        return;
     }
+
+    if (menuBtn.dataset.ilvexReady === "true") {
+        return;
+    }
+
+    menuBtn.dataset.ilvexReady = "true";
+
+    const openMenu = () => {
+        menu.classList.add("active");
+
+        if (overlay) {
+            overlay.classList.add("active");
+        }
+
+        document.body.classList.add("menu-open");
+
+        menuBtn.setAttribute("aria-expanded", "true");
+    };
+
+    const closeMenu = () => {
+        menu.classList.remove("active");
+
+        if (overlay) {
+            overlay.classList.remove("active");
+        }
+
+        document.body.classList.remove("menu-open");
+
+        menuBtn.setAttribute("aria-expanded", "false");
+    };
+
+    const toggleMenu = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (menu.classList.contains("active")) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    };
+
+    menuBtn.addEventListener("click", toggleMenu);
+
+    if (overlay) {
+        overlay.addEventListener("click", (event) => {
+            event.preventDefault();
+            closeMenu();
+        });
+    }
+
+    menu.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+            closeMenu();
+        });
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            closeMenu();
+        }
+    });
+
+    window.ilvexOpenMenu = openMenu;
+    window.ilvexCloseMenu = closeMenu;
+}
 
 
     /* =====================================================
