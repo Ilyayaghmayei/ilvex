@@ -3766,4 +3766,106 @@ textarea::placeholder {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
     }
+}/* =====================================================
+   ILVEX MOBILE MENU — FINAL FIX
+===================================================== */
+
+@media screen and (max-width: 700px) {
+
+    /* دکمه منو */
+    #menuBtn {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        position: relative !important;
+
+        width: 47px !important;
+        height: 47px !important;
+
+        cursor: pointer !important;
+        z-index: 100001 !important;
+
+        pointer-events: auto !important;
+    }
+
+    /* خود منو */
+    #menu {
+        position: fixed !important;
+
+        top: 50% !important;
+        left: 50% !important;
+
+        transform: translate(-50%, -50%) scale(0.96) !important;
+
+        width: min(88vw, 370px) !important;
+        max-height: 78dvh !important;
+
+        display: none !important;
+
+        flex-direction: column !important;
+
+        overflow-y: auto !important;
+
+        z-index: 100000 !important;
+
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    /* حالت باز */
+    #menu.active {
+        display: flex !important;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+
+        pointer-events: auto !important;
+
+        transform: translate(-50%, -50%) scale(1) !important;
+    }
+
+    /* لینک‌های منو */
+    #menu.active a {
+        pointer-events: auto !important;
+        cursor: pointer !important;
+    }
+
+    /* پس‌زمینه */
+    #menuOverlay {
+        position: fixed !important;
+
+        inset: 0 !important;
+
+        width: 100vw !important;
+        height: 100vh !important;
+
+        z-index: 99998 !important;
+
+        display: block !important;
+
+        opacity: 0 !important;
+        visibility: hidden !important;
+
+        pointer-events: none !important;
+    }
+
+    #menuOverlay.active {
+        opacity: 1 !important;
+        visibility: visible !important;
+
+        pointer-events: auto !important;
+    }
+
+    /* هدر بالاتر از بقیه */
+    .header {
+        position: relative !important;
+        z-index: 100001 !important;
+    }
+
+    /* جلوگیری از اسکرول پشت منو */
+    body.menu-open {
+        overflow: hidden !important;
+    }
 }
