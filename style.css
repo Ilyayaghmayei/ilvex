@@ -3868,4 +3868,268 @@ textarea::placeholder {
     body.menu-open {
         overflow: hidden !important;
     }
+}/* =========================================================
+   ILVEX — MOBILE MENU CLEAN REBUILD
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    /* ---------- HEADER ---------- */
+
+    header.header {
+        position: relative !important;
+        z-index: 100001 !important;
+    }
+
+    /* ---------- MENU BUTTON ---------- */
+
+    #menuBtn {
+        display: flex !important;
+
+        position: relative !important;
+        z-index: 100002 !important;
+
+        width: 46px !important;
+        height: 46px !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        cursor: pointer !important;
+        pointer-events: auto !important;
+
+        touch-action: manipulation !important;
+
+        -webkit-tap-highlight-color: transparent !important;
+
+        border: 1px solid rgba(0, 200, 255, 0.35) !important;
+        border-radius: 14px !important;
+
+        background: rgba(5, 15, 25, 0.85) !important;
+
+        color: #ffffff !important;
+
+        box-shadow:
+            0 0 15px rgba(0, 180, 255, 0.12),
+            inset 0 0 15px rgba(0, 180, 255, 0.03) !important;
+
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease !important;
+    }
+
+    #menuBtn:active {
+        transform: scale(0.92) !important;
+
+        border-color: rgba(0, 220, 255, 0.8) !important;
+
+        box-shadow:
+            0 0 25px rgba(0, 200, 255, 0.35) !important;
+    }
+
+    #menuBtn .menu-icon {
+        display: block !important;
+
+        font-size: 24px !important;
+        line-height: 1 !important;
+
+        pointer-events: none !important;
+
+        color: #ffffff !important;
+    }
+
+
+    /* ---------- MAIN MENU ---------- */
+
+    #menu {
+        position: fixed !important;
+
+        top: 50% !important;
+        left: 50% !important;
+
+        width: min(88vw, 360px) !important;
+        max-height: 80vh !important;
+
+        transform: translate(-50%, -50%) scale(0.92) !important;
+
+        display: none !important;
+
+        flex-direction: column !important;
+        align-items: stretch !important;
+
+        gap: 10px !important;
+
+        padding: 18px !important;
+
+        margin: 0 !important;
+
+        box-sizing: border-box !important;
+
+        opacity: 0 !important;
+        visibility: hidden !important;
+
+        pointer-events: none !important;
+
+        overflow-y: auto !important;
+
+        z-index: 100000 !important;
+
+        border: 1px solid rgba(0, 200, 255, 0.28) !important;
+        border-radius: 22px !important;
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(3, 10, 18, 0.98),
+                rgba(5, 20, 30, 0.96)
+            ) !important;
+
+        box-shadow:
+            0 0 45px rgba(0, 170, 255, 0.18),
+            0 20px 80px rgba(0, 0, 0, 0.65),
+            inset 0 0 30px rgba(0, 180, 255, 0.025) !important;
+
+        transition:
+            opacity 0.25s ease,
+            transform 0.25s ease,
+            visibility 0.25s ease !important;
+    }
+
+
+    /* ---------- OPEN MENU ---------- */
+
+    #menu.active {
+        display: flex !important;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+
+        pointer-events: auto !important;
+
+        transform: translate(-50%, -50%) scale(1) !important;
+
+        z-index: 100000 !important;
+    }
+
+
+    /* ---------- MENU LINKS ---------- */
+
+    #menu a {
+        display: flex !important;
+
+        width: 100% !important;
+        min-height: 52px !important;
+
+        box-sizing: border-box !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        padding: 12px 16px !important;
+
+        margin: 0 !important;
+
+        border: 1px solid rgba(0, 200, 255, 0.12) !important;
+        border-radius: 14px !important;
+
+        background: rgba(255, 255, 255, 0.025) !important;
+
+        color: #ffffff !important;
+
+        text-decoration: none !important;
+
+        font-family: "Vazirmatn", sans-serif !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease !important;
+    }
+
+    #menu a:hover,
+    #menu a:active {
+        background: rgba(0, 180, 255, 0.09) !important;
+
+        border-color: rgba(0, 210, 255, 0.45) !important;
+
+        box-shadow:
+            0 0 20px rgba(0, 190, 255, 0.12) !important;
+
+        transform: translateY(-1px) !important;
+    }
+
+
+    /* ---------- OVERLAY ---------- */
+
+    #menuOverlay {
+        position: fixed !important;
+
+        top: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+
+        width: 100vw !important;
+        height: 100vh !important;
+
+        display: block !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        opacity: 0 !important;
+        visibility: hidden !important;
+
+        pointer-events: none !important;
+
+        background: rgba(0, 0, 0, 0.62) !important;
+
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+
+        z-index: 99998 !important;
+
+        transition:
+            opacity 0.25s ease,
+            visibility 0.25s ease !important;
+    }
+
+
+    /* ---------- ACTIVE OVERLAY ---------- */
+
+    #menuOverlay.active {
+        opacity: 1 !important;
+
+        visibility: visible !important;
+
+        pointer-events: auto !important;
+
+        z-index: 99998 !important;
+    }
+
+
+    /* ---------- BODY ---------- */
+
+    body.menu-open {
+        overflow: hidden !important;
+    }
+
+}
+
+
+/* =========================================================
+   DESKTOP — KEEP MENU NORMAL
+   ========================================================= */
+
+@media (min-width: 701px) {
+
+    #menuOverlay {
+        display: none !important;
+        pointer-events: none !important;
+    }
+
 }
