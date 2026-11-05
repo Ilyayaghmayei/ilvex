@@ -3664,3 +3664,150 @@ textarea::placeholder {
         pointer-events: none !important;
     }
 }
+/* =========================================================
+   ILVEX — MOBILE MENU = DESKTOP STYLE
+   No hamburger / no popup / no toggle
+========================================================= */
+
+@media (max-width: 700px) {
+
+    /* دکمه منوی موبایل کلاً حذف */
+    #menuBtn,
+    .menu-btn {
+        display: none !important;
+    }
+
+    /* منو مثل لپ‌تاپ همیشه نمایش داده شود */
+    #menu,
+    .menu {
+        position: static !important;
+
+        width: auto !important;
+        max-width: none !important;
+
+        display: flex !important;
+
+        flex-direction: row !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        gap: 4px !important;
+
+        padding: 0 !important;
+        margin: 0 !important;
+
+        background: transparent !important;
+
+        border: none !important;
+
+        border-radius: 0 !important;
+
+        box-shadow: none !important;
+
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+
+        pointer-events: auto !important;
+
+        transform: none !important;
+
+        animation: none !important;
+
+        z-index: 100002 !important;
+    }
+
+    #menu.active,
+    .menu.active {
+        display: flex !important;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+
+        transform: none !important;
+    }
+
+    /* لینک‌ها همان حالت دسکتاپ */
+    #menu a,
+    .menu a {
+        width: auto !important;
+
+        padding: 10px 12px !important;
+
+        background: transparent !important;
+
+        border: 1px solid transparent !important;
+
+        border-radius: 12px !important;
+
+        color: #dcecff !important;
+
+        text-align: center !important;
+
+        font-size: 13px !important;
+
+        white-space: nowrap !important;
+
+        transition:
+            0.25s ease !important;
+    }
+
+    #menu a:hover,
+    #menu a:focus-visible {
+        color: #ffffff !important;
+
+        background:
+            rgba(22, 131, 255, 0.14) !important;
+
+        border-color:
+            rgba(80, 166, 255, 0.28) !important;
+
+        box-shadow:
+            0 0 22px
+            rgba(22, 131, 255, 0.10) !important;
+    }
+
+    /* Overlay هم دیگر کاربردی ندارد */
+    #menuOverlay {
+        display: none !important;
+
+        opacity: 0 !important;
+
+        visibility: hidden !important;
+
+        pointer-events: none !important;
+    }
+
+    body.menu-open {
+        overflow: auto !important;
+    }
+
+    /* هدر کمی جمع‌وجورتر شود تا منو جا شود */
+    .header {
+        padding:
+            10px 14px !important;
+
+        gap: 8px !important;
+    }
+
+    .header .brand {
+        flex-shrink: 0 !important;
+    }
+
+    .header .menu {
+        flex: 1 !important;
+
+        overflow-x: auto !important;
+
+        scrollbar-width: none !important;
+
+        -ms-overflow-style: none !important;
+    }
+
+    .header .menu::-webkit-scrollbar {
+        display: none !important;
+    }
+}
